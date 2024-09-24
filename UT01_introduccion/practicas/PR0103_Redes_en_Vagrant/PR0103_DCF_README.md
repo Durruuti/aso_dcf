@@ -53,6 +53,8 @@ Vagrant.configure("2") do |config|
        apt-get update -y
        apt-get install -y apache2
   SHELL
+
+  config.vm.synced_folder "Web/", "/var/www/html" #Carpeta compartida entre servidor y host
 end
 ```
 
@@ -64,3 +66,62 @@ Si introducimos el comando ```ip a``` nos apareceran todas las interfaces dispon
 
 
 > Como vemos en la imagen, a través del vagrantfile hemos configurado todas las interfaces sin tener que configurar directamente la MV
+
+
+
+### Problemas con la conexion
+
+Para evitar problemas con la conexion en la mv vamos a tener que hacer un ajuste al archivo **Vagranfile**
+
+Realmente vamos a añadir lo siguiente:
+
+> Lo meteremos dentro del scripting
+```ruby
+     echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+```
+
+Nos tiene que quedar algo asi:
+
+![Problemas de conexion](imagenes/Problemas%20de%20conex.png)
+
+En el caso de que por defecto no arranque el script automaticamente tendremos que iniciarlo de forma manual ejecutando el comando ```vagrant provision```
+
+Ahora ya tendremos todo listo.
+
+## Configuración de la web
+
+
+Crearemos un sitio web con tres paginas.
+
+Necesitaremos dos archivos a parte del **index.html**
+
+1. about.html
+2. contact.html
+
+Seguido de esto le he añadido una hoja de estilos
+
+1. styles.css
+
+> Este sería el contenido de la pagina web
+
+![Paginaweb](imagenes/web.png)
+
+### Código de la web
+
+1. [index.html](Web/index.html)
+2. [about.html](Web/about.html)
+3. [contact.html](Web/contact.html)
+4. [Hoja de estilos](Web/styles.css)
+
+
+### Confirmación carpeta compartida
+
+Para comprobar que tenemos las carpetas sincronizadas haremos lo que se ha hecho en la siguiente captura.
+
+![Carpetas sincronizadas](imagenes/carpetas.png)
+
+### Visualización web
+
+Ahora en el host abrimos el navegador y escribimos la dirección IP del servidor WEB
+> Vemos como ha funcionado perfectamente.
+![Sitioweb](imagenes/SitioWeb.png)
