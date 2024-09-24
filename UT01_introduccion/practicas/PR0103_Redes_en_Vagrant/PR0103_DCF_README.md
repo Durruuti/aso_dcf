@@ -58,3 +58,9 @@ end
 
 Ahora que el ***Vagrantfile*** está editado de la siguiente manera, podremos iniciar la mv con el comando ```vagrant up ```
 
+Si introducimos el comando ```ip a``` nos apareceran todas las interfaces disponibles en nuestro equipo
+
+![Interfaces en la mv](imagenes/ipa.png)
+
+
+> Como vemos en la imagen, a través del vagrantfile hemos configurado todas las interfaces sin tener que configurar directamente la MV
