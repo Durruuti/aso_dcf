@@ -1,4 +1,4 @@
-[Volver al indice](/UT01_introduccion/index.md)
+[Volver al indice](../../index.md)
 # PR0103 : Redes en Vagrant
 
 ## Preparación de la máquina.
