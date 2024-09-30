@@ -41,11 +41,11 @@ En este **Vagrantfile** necesitaremos configurar:
 Como resultado de esta configuración tendríamos que tener algo parecido a lo siguiente:
 ```ruby
 Vagrant.configure("2") do |config|
-  config.vm.network "private_network" , ip: "172.16.0.0", netmask: "255.255.0.0"
 
   config.vm.define "Win19_Server" do |winserver|
     winserver.vm.box = "gusztavvargadr/windows-server-2019-standard"
     winserver.vm.hostname = "w19-server"
+    winserver.vm.network "private_network",ip: "172.16.0.2" netmask: "255.255.0.0"
     winserver.vm.provider "virtualbox" do |vb|
       vb.memory = "4096"
       vb.cpus = 4
@@ -56,6 +56,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "Win10" do |win10|
     win10.vm.box = "gusztavvargadr/windows-10"
     win10.vm.hostname = "w10"
+    win10.vm.network "private_network",ip: "172.16.0.3" netmask: "255.255.0.0"
     win10.vm.provider "virtualbox" do |vb|
       vb.memory = "4096"
       vb.cpus = 2
@@ -63,6 +64,7 @@ Vagrant.configure("2") do |config|
   end
 end
 ```
+
 
 ## RDP
 
@@ -86,6 +88,34 @@ Para ello lo que tenemos que hacer es lo siguiente:
 
 ![Credenciales](imagenes/creds.png)
 
-3.Aceptar el cuadro de sincronización y **listo**.
+3. Aceptar el cuadro de sincronización y **listo**.
 
 ![RDP](imagenes/RDPfinalizado.png)
+
+## Conectividad entre MVs
+
+Para que haya conectividad entre ambas maquinas he decidido crear una red NAT para las mvs.
+
+Esto conseguirá que, además de tener interconexión entre ellas haya salida hacia internet.
+
+Para ello nos vamos a VirtualBox y la creamos de la siguiente forma:
+
+
+>![RedNat](imagenes/rednat.png)
+
+Una vez creada, vamos dentro del **Vagrantfile** y le asignamos las siguientes direcciones IP.
+
+    ```ruby
+        win10.vm.network "private_network",ip: "10.0.2.3", netmask: "255.255.255.0"
+        winserver.vm.network "private_network",ip: "10.0.2.2", netmask: "255.255.255.0"
+    ```
+
+ Una vez hecho esto **desactivamos el firewall en ambas mvs**
+
+Podemos utilizar el comando: ```netsh advfirewall set allprofiles state off```
+
+Con esta configuración ambas máquinas y el host estarán en la red NAT que hemos creado.
+
+Si hacemos un ping de Win10 a Win19_Server pues deberia de resultarnos algo como lo siguiente:
+
+![Ping](imagenes/Conectividad.png)
