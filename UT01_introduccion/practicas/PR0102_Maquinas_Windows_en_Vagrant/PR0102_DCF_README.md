@@ -105,10 +105,10 @@ Para ello nos vamos a VirtualBox y la creamos de la siguiente forma:
 
 Una vez creada, vamos dentro del **Vagrantfile** y le asignamos las siguientes direcciones IP.
 
-    ```ruby
+```ruby
         win10.vm.network "private_network",ip: "10.0.2.3", netmask: "255.255.255.0"
         winserver.vm.network "private_network",ip: "10.0.2.2", netmask: "255.255.255.0"
-    ```
+```
 
  Una vez hecho esto **desactivamos el firewall en ambas mvs**
 
