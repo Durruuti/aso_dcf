@@ -16,6 +16,8 @@ Comprobamos con un ```dir``` vermos que ha aparecido el directorio **.vagrant**
 
 Iniciamos la máquina con el comandon ```vagrant up```
 
+---
+
 ## Permisos de usuarios
 
 Una vez dentro nos tenemos que situar dentro del directorio personal del usuario.
@@ -106,7 +108,7 @@ vagrant@ubuntu2204:~/pr0201$ mkdir dir2/dir21
 vagrant@ubuntu2204:~/pr0201$ ls dir2/
 dir21
 ```
-
+---
 
 ## Notación simbólica y octal
 
@@ -145,7 +147,7 @@ Ahora haremos el cambio de los permisos del archivo a las siguientes en forma **
 - -w-r----x : ```chmod 241 notacion.txt ``` **->** ```--w-r----x 1 vagrant vagrant    1 Oct  1 06:57 notacion.txt```
 - -----xrwx : ```chmod 017 notacion.txt``` **->** ```------xrwx 1 vagrant vagrant    1 Oct  1 06:57 notacion.txt```
 
-
+---
 
 ## El bit sigd
 
@@ -288,8 +290,130 @@ Como vemos en el codigo de arriba no nos permite escribir en el fichero1 que tie
 
 1. ¿Qué ventajas tiene usar el bit setgid en entornos colaborativos?
 
-Nos permite que todos los usuarios pertenecientes al grupo propietario del directorio principal podrá interactuar con los archivos y carpetas que contengan.
+    Nos permite que todos los usuarios pertenecientes al grupo propietario del directorio principal podrá interactuar con los archivos y carpetas que contengan.
 
 2. ¿Qué sucede si no se aplica el bit setgid en un entorno colaborativo?
 
-Puede provocar problemas de acceso a contenidos y a archivos.
+    Puede provocar problemas de acceso a contenidos y a archivos.
+
+
+### 8. Eliminación de usuarios y directorios.
+
+Primero eliminaremos los usuarios **dcf1** y **dcf2**
+```bash
+vagrant@ubuntu2204:~$ sudo userdel dcf1
+vagrant@ubuntu2204:~$ sudo userdel dcf2
+```
+
+
+Y por último las carpetas y archivos.
+
+```bash
+vagrant@ubuntu2204:/$ sudo rm -rf compartido/
+```
+
+---
+
+## Sticky bit
+
+### 1. Creación de carpeta "compartido/"
+
+Crearemos la carpeta "compartido" en la raiz de nuestro sistema
+
+```bash
+ sudo mkdir compartido
+```
+
+A esta carpeta le daremos los permisos a todos los usuarios
+
+```bash
+ls -l | grep "compartido"
+drwxr-xr-x   2 root root       4096 Oct  3 06:59 compartido
+```
+
+### 2. Creación usuario1 y usuario2
+
+Para crear ambos usuarios escribimos lo siguiente:
+
+```bash
+vagrant@ubuntu2204:/$ sudo useradd -s /bin/bash dcf1
+vagrant@ubuntu2204:/$ sudo useradd -s /bin/bash dcf2
+vagrant@ubuntu2204:/$ sudo passwd dcf1
+New password: 
+Retype new password:
+passwd: password updated successfully
+vagrant@ubuntu2204:/$ sudo passwd dcf2
+New password: 
+Retype new password:
+passwd: password updated successfully
+vagrant@ubuntu2204:/$ 
+```
+
+### 3. Pruebas con usuarios
+
+Iniciaremos con dcf1, crearemos un fichero y con dcf2 intentaremos borrarlo
+
+```bash
+
+vagrant@ubuntu2204:/$ su dcf1
+Password: 
+dcf1@ubuntu2204:/$ cd compartido/
+dcf1@ubuntu2204:/compartido$ echo "" > fichero1.txt
+dcf1@ubuntu2204:/compartido$ exit
+exit
+vagrant@ubuntu2204:/$ su dcf2
+Password:
+dcf2@ubuntu2204:/$ cd compartido/
+dcf2@ubuntu2204:/compartido$ rm fichero1.txt 
+rm: remove write-protected regular file 'fichero1.txt'?
+dcf2@ubuntu2204:/compartido$ ls -l
+total 4
+-rw-rw-r-- 1 dcf1 dcf1 1 Oct  3 07:05 fichero1.txt
+dcf2@ubuntu2204:/compartido$ rm fichero1.txt 
+rm: remove write-protected regular file 'fichero1.txt'? yes
+dcf2@ubuntu2204:/compartido$ ls -l
+total 0
+dcf2@ubuntu2204:/compartido$
+
+```
+
+### 4. Establecemos el sticky bit en el directorio "compartido"
+
+Nos iremos al directorio raíz y le asignaremos el permiso de **sticky bit**
+
+```bash
+vagrant@ubuntu2204:/$ sudo chmod +t compartido/
+vagrant@ubuntu2204:/$ ls -l | grep "compartido"
+drwxrwxrwt   2 root root       4096 Oct  3 07:05 compartido
+vagrant@ubuntu2204:/$
+```
+
+### 5. Intento de borrado de fichero creado por dcf1
+
+Ahora repetimos lo mismo iniciamos sesion con el dcf1 creamos el archivo y intentamos borrarlo con dcf2
+
+```bash
+vagrant@ubuntu2204:/$ su dcf1
+Password:
+dcf1@ubuntu2204:/$ cd compartido/
+dcf1@ubuntu2204:/compartido$ echo "" > fichero1.txt
+dcf1@ubuntu2204:/compartido$ exit
+exit
+vagrant@ubuntu2204:/$ su dcf2
+Password:
+dcf2@ubuntu2204:/$ cd compartido/
+dcf2@ubuntu2204:/compartido$ rm fichero1.txt 
+rm: remove write-protected regular file 'fichero1.txt'? yes
+rm: cannot remove 'fichero1.txt': Operation not permitted
+dcf2@ubuntu2204:/compartido$
+```
+
+### 6. Preguntas
+
+1. ¿Qué efecto tiene el sticky bit en un directorio?
+
+    Como vemos por culpa del sticky bit nos prohibe eliminar el archivo que creó **dcf1**
+
+2. Si tienes habilitado el sticky bit, ¿cómo tendrías que hacer para eliminar un fichero dentro del directorio?
+
+    Tendría que ser el propietario el responsable de eliminar el archivo.
