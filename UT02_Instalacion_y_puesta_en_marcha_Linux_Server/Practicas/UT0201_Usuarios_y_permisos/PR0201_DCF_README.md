@@ -417,3 +417,56 @@ dcf2@ubuntu2204:/compartido$
 2. Si tienes habilitado el sticky bit, ¿cómo tendrías que hacer para eliminar un fichero dentro del directorio?
 
     Tendría que ser el propietario el responsable de eliminar el archivo.
+
+
+## Fichero etc/shadow
+
+> IMPORTANTE: Tendremos que utilizar la imagen de mv : **generic/ubuntu2204**
+
+### 1. Creación de Usuario
+
+Como primer paso, crearemos el usuario con nuestras iniciales y de contraseña **asir2**.Estos son los comandos para la creación del usuario:
+
+```bash
+vagrant@ubuntu2204:~$ sudo passwd dcf
+New password: 
+Retype new password:
+passwd: password updated successfully
+vagrant@ubuntu2204:~$
+```
+
+### 2. Mostrar linea en etc/shadow
+
+Ahora mostraremos con el siguiente comando la linea de nuestro usuario dentro del archivo **etc/shadow**
+
+```bash
+vagrant@ubuntu2204:~$ sudo cat /etc/shadow | grep "dcf"
+dcf:$y$j9T$PytXdYrHjsUTwsSBe9BSO.$S14sK5WKdHXoD0DcZY2tC5BY55pK80af1LygVS2cjW8:20003:0:99999:7:::
+```
+
+### 3. Tipos de hashes
+
+Las contraseñas se guardan en este archivo de manera encriptada. Suele utilizar los siguientes protocolos:
+
+- $1$ – MD5
+- $2a$ – Blowfish
+- $2y$ – Eksblowfish
+- $5$ – SHA-256
+- $6$ – SHA-512
+
+> Estos métodos de hashes los he encontrado en el apartado dos del temario: $Ficheros /etc/passwd /etc/shadow y /etc/group en GNU/Linuxç$
+
+Si nos fijamos en nuestra contraseña, no pertenece a ninguna de las que tenemos apuntadas. La contraseña nuestra empieza por una y rodeada de dos simbolos de dollar.
+
+### 4. Hash de nuestras contraseñas
+
+Como en nuestro caso empieza por una manera distinta a las indicadas en el paso anterior, he decidido buscar que tipo de hash es.
+
+He descubierto a traves de la [documentación oficial de Debian](https://manpages.debian.org/unstable/libcrypt-dev/crypt.5.en.html), que tipo de hash es.
+
+En cuestión es **yescrypt**.
+
+![Cifrado contraseña etc/shadow](imagenes/yesycrypt.png)
+
+> Después de llegar aquí he revisado el temario y sí aparecia el yescrypt, pero en otro apartado, aparecia en $Understanding /etc/shadow file format on Linux$ 
+
