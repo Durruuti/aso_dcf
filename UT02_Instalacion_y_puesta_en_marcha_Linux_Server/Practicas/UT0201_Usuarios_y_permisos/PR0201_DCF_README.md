@@ -419,6 +419,8 @@ dcf2@ubuntu2204:/compartido$
     Tendría que ser el propietario el responsable de eliminar el archivo.
 
 
+---
+
 ## Fichero etc/shadow
 
 > IMPORTANTE: Tendremos que utilizar la imagen de mv : **generic/ubuntu2204**
@@ -470,3 +472,74 @@ En cuestión es **yescrypt**.
 
 > Después de llegar aquí he revisado el temario y sí aparecia el yescrypt, pero en otro apartado, aparecia en $Understanding /etc/shadow file format on Linux$ 
 
+### 5. Valor Salt en /etc/shadow
+
+El valor **salt** que va despues de la contraseña hasheada consiste en un valor aleatorio que es único para cada usuario.
+
+La finalidad de la utilización de este valor es dificultar a los atacantes a través de tablas de contraseñas penetrar en la seguridad de los usuarios de nuestro equipo.
+
+### 6. Ataques de diccionario y Tablas rainbow
+
+1. Ataques de diccionario - Fuente: [Cyberzaintza](https://www.ciberseguridad.eus/ciberglosario/ataque-de-diccionario)
+
+
+
+**¿Qué es un ataque de diccionario?**
+
+Es un tipo de ataque que consiste en probar muchas combinaciones de contraseñas guardadas en diccionarios.
+
+Estos diccionarios consisten en archivos que contienen listados de palabras. 
+
+
+2. Tablas rainbow - Fuente: [Ionos Digital Guide](https://www.ionos.es/digitalguide/servidores/seguridad/rainbow-tables/)
+
+**¿Qué es una tabla rainbow?**
+
+Una tabla rainbow es una base de datos masiva que contiene un listado gigante de claves junto sus valores hash.
+
+Estas tablas permiten a hackers buscar rapidamente la contraseña correspondiente a cada hash.Esto facilita la obtención del acceso a sistemas.
+
+---
+
+## Rompiendo hashes con JohntheRIpper
+
+### 1. Instalación de John the Ripper
+
+Para instalar el programa en linux, tenemos que introducir el siguiente comando:
+
+```bash
+vagrant@ubuntu2204:~$ sudo apt-get install john -y
+```
+
+Una vez instalado nos deberia de aparecer lo siguiente :
+
+```bash
+vagrant@ubuntu2204:~$ john
+Created directory: /home/vagrant/.john
+John the Ripper password cracker, version 1.8.0
+Copyright (c) 1996-2013 by Solar Designer
+Homepage: http://www.openwall.com/john/
+
+Usage: john [OPTIONS] [PASSWORD-FILES]
+--single                   "single crack" mode
+--wordlist=FILE --stdin    wordlist mode, read words from FILE or stdin
+--rules                    enable word mangling rules for wordlist mode
+--incremental[=MODE]       "incremental" mode [using section MODE]
+--external=MODE            external mode or word filter
+--stdout[=LENGTH]          just output candidate passwords [cut at LENGTH]
+--restore[=NAME]           restore an interrupted session [called NAME]
+--session=NAME             give a new session the NAME
+--status[=NAME]            print status of a session [called NAME]
+--make-charset=FILE        make a charset, FILE will be overwritten
+--show                     show cracked passwords
+--test[=TIME]              run tests and benchmarks for TIME seconds each
+--users=[-]LOGIN|UID[,..]  [do not] load this (these) user(s) only
+--groups=[-]GID[,..]       load users [not] of this (these) group(s) only
+--shells=[-]SHELL[,..]     load users with[out] this (these) shell(s) only
+--salts=[-]N               load salts with[out] at least N passwords only
+--save-memory=LEVEL        enable memory saving, at LEVEL 1..3
+--node=MIN[-MAX]/TOTAL     this node's number range out of TOTAL count
+--fork=N                   fork N processes
+--format=NAME              force hash type NAME: descrypt/bsdicrypt/md5crypt/
+                           bcrypt/LM/AFS/tripcode/dummy/crypt
+```
