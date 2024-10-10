@@ -152,3 +152,23 @@ The key's randomart image is:
 F:\ASIR2\ASO\aso_dcf\UT02_Instalacion_y_puesta_en_marcha_Linux_Server\Practicas\UT0202_Conexion_SSH\claves>
 ```
 
+Una vez que le pasemos al servidor de ubuntu la clave y la guardemos en el directorio del usuario que hemos creado, si nos conectamos por ssh desde el host veremos como autentica a través de la clave sin hacer falta añadir contraseña.
+
+
+```powershell
+C:\Users\Alumno>ssh dcfserver
+alumno@dcfserver's password:
+
+C:\Users\Alumno>ssh dcf_ssh@dcfserver
+Enter passphrase for key 'C:\Users\Alumno/.ssh/id_rsa':
+Enter passphrase for key 'C:\Users\Alumno/.ssh/id_rsa':
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+dcf_ssh@dcfserver:~$
+```
