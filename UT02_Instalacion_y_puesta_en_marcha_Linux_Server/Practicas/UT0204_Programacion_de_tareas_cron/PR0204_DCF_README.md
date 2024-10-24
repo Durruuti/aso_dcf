@@ -13,7 +13,7 @@ Para esta práctica utilizare un ubuntu 22.04
    - 0 */3 * * 0
 
 2. La tarea se ejecuta a las 12 de la mañana los días pares del mes.
-   - 0 0 */2 * *
+   - 0 12 */2 * *
 
 2. La tarea se ejecuta el primer día de cada mes a las 8 de la mañana y a las 8 de la tarde.
    - 0 8 1 * *
