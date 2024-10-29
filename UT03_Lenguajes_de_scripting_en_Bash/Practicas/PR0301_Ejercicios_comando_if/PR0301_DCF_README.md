@@ -253,3 +253,164 @@ EXAMEN DE CONDUCIR
 Dame la nota del examen99
 Pon una nota real
 ```
+
+# Ejercicio 8: Comprobacion del espacio en disco
+
+## Código de script
+
+```bash
+#!/bin/bash
+
+echo "Comprobador de espacio en disco principal"
+
+espacio=$( df -h | grep /dev/mapper | awk '{print $5}' | tr -d '%')
+
+function comprobar {
+        if [ "$espacio" -lt  10 ];
+        then
+                echo "Te queda menos de un 10% de espacio"
+        else
+                echo "Todo bien"
+        fi
+};
+comprobar
+```
+
+
+## Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicional_if$ sudo bash ej8_script.sh
+Comprobador de espacio en disco principal
+Te queda menos de un 10% de espacio
+```
+
+# Ejercicio 9: Menú de opciones
+
+## Código del script
+
+```bash
+#!/bin/bash
+
+echo "Menú diario"
+echo "1) Filete con patatas"
+echo "2) Zamburiñas"
+echo "3) Arroz tres delicias"
+echo "Seleccione el número del plato"
+
+read -p "Qué plato desea probar? " plato
+
+function comer {
+        if [ "$plato" -eq 1 ]
+        then
+                echo "De acuerdo, preparando tu filete con patatas"
+        elif [ "$plato" -eq 2 ]
+        then
+                echo "Genial! En poco tendrás tus zamburiñas"
+        elif [ "$plato" -eq 3 ]
+        then
+                echo "Muy buena elección el arroz tres delicias"
+        else
+                echo "Hijo/a mio/a, mira bien la carta!"
+        fi
+};
+
+comer
+
+```
+
+## Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicional_if$ sudo bash ej9_script.sh
+Menú diario
+1) Filete con patatas
+2) Zamburiñas
+3) Arroz tres delicias
+Seleccione el número del plato
+Qué plato desea probar? 88
+Hijo/a mio7a, mira bien la carta!
+```
+
+# Ejercicio 10: Evaluación de edad
+
+## Código del script
+
+```bash
+#!/bin/bash
+
+echo "Control parental activado!"
+
+read -p "Dime tu edad si quieres entrar al sitio web! " edad
+
+function verificar {
+        if [ "$edad" -lt 18 ];
+        then
+                echo "Lo siento eres menor de edad!"
+        elif [ "$edad" -lt 65 ] && [ "$edad" -gt 18 ];
+        then
+                echo "Bienvenido/a eres mayor de edad, puedes acceder al casino"
+        elif [ "$edad" -lt 100 ] && [ "$edad" -gt 65 ];
+        then
+                echo "No estas muy mayor para entrar en la web de un casino?"
+        else
+                echo "Dame una edad real porfavor!"
+        fi
+};
+
+verificar
+```
+
+## Estructura del script
+
+```bash
+vagrant@ubuntu2204:~/condicional_if$ sudo bash ej10_script.sh
+Control parental activado!
+Dime tu edad si quieres entrar al sitio web! 5
+Lo siento eres menor de edad!
+vagrant@ubuntu2204:~/condicional_if$ sudo bash ej10_script.sh
+Control parental activado!
+Dime tu edad si quieres entrar al sitio web! 20  
+Bienvenido/a eres mayor de edad, puedes acceder al casino
+vagrant@ubuntu2204:~/condicional_if$ sudo bash ej10_script.sh
+Control parental activado!
+Dime tu edad si quieres entrar al sitio web! 99
+No estas muy mayor para entrar en la web de un casino?
+vagrant@ubuntu2204:~/condicional_if$
+```
+
+
+# Ejercicio 11 : Contar líneas de un archivo
+
+## Código del script
+
+```bash
+#!/bin/bash
+
+echo "Verificador de archivos"
+
+read -p "Introduce el nombre de un archivo a verificar" archivo
+
+function verificador {
+        if [ -e "$archivo" ]
+        then
+                echo "El archivo existe!"
+                comprobar=$( wc -l $archivo | tr -d $archivo)
+                echo "El archivo tiene $comprobar lineas"
+        else
+                echo "Dame un archivo que exista"
+        fi
+}
+
+verificador
+```
+
+## Ejecución del script
+
+```bash0
+vagrant@ubuntu2204:~/condicional_if$ sudo bash ej11_Script.sh
+Verificador de archivos
+Introduce el nombre de un archivo a verificar/etc/network/interfaces
+El archivo existe!
+El archivo tiene 3  lineas
+```
