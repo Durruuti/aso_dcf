@@ -76,4 +76,8 @@ vagrant@ubuntu2204:~/comandos_case$
 
 ### Código del script
 
+```bash
+
+```
+
 ### Ejecución del script
