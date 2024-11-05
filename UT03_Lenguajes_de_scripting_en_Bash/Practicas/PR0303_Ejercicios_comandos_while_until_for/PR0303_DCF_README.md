@@ -235,11 +235,174 @@ Dame un numero: 7
 ### Código del script
 
 ```bash
+#!/bin/bash
 
+for archivo in *.txt;
+do
+        if [ -e "$archivo" ];
+        then
+                echo "Archivo encontrado: $archivo"
+        fi
+done
 ```
 
 ### Ejecución del script
 
 ```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej8_script.sh
+Archivo encontrado: adios.txt
+Archivo encontrado: hola.txt
+Archivo encontrado: prueba.txt
+vagrant@ubuntu2204:~/ejercicios_bucles$ ls
+123.csv        ej2_script.sh  ej5_script.sh  ej8_script.sh  prueba.txt
+adios.txt      ej3_script.sh  ej6_script.sh  hola.txt       si.csv
+ej1_script.sh  ej4_script.sh  ej7_script.sh  prueba.csv
+vagrant@ubuntu2204:~/ejercicios_bucles$
+```
 
+
+## Ejercicio 9: Factorial de un número
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+echo "CALCULADORA DE FACTORIALES"
+echo "---------------------------"
+
+read -p "Dame un número " num
+
+factorial=1
+
+
+for (( i=1; i<=num; i++))
+do
+        factorial=$((factorial * i)) 
+done
+
+echo "el numero factorial de $num es: $factorial"
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej9_script.sh
+CALCULADORA DE FACTORIALES
+---------------------------
+Dame un número 3
+el numero factorial de 3 es: 6
+vagrant@ubuntu2204:~/ejercicios_bucles$
+```
+
+## Ejercicio 10: Verificar contraseña
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+echo "VERIFICACION DE CONTRASEÑA"
+echo "--------------------------"
+
+
+read -sp "Introduce la contraseña " c1
+
+contra="Villabalter1"
+
+until [ "$c1" = "$contra" ]; do
+        echo "error!"
+        read -sp "Introduce la contraseña " c1
+done
+
+echo "Acertaste!"
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej10_script.sh
+VERIFICACION DE CONTRASEÑA
+--------------------------
+Introduce la contraseña error!
+Introduce la contraseña error!
+Introduce la contraseña Acertaste!
+```
+
+## Ejercicio 11: Adivinar un numero
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+echo "ADIVINA ADIVINA MI NUMERO!"
+
+read -p "Introduce el número! " n1
+
+
+sorteo=$(( RANDOM % 10 + 1 ))
+
+
+while [ "$n1" != "$sorteo" ]; do
+        echo "jijiji casi crack"
+        read -p "Introduce el número! " n1
+done
+
+echo "Felicidades acertastes!"
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej11_script.sh
+ADIVINA ADIVINA MI NUMERO!
+Introduce el número! 1
+jijiji casi crack
+Introduce el número! 2
+jijiji casi crack
+Introduce el número! 3
+Felicidades acertastes!
+```
+
+## Ejercicio 12: Mostrar fecha n veces
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+echo "MOSTRADOR DE FECHAS"
+
+
+read -p "Dime un numero" n1
+
+for (( i=0; i < "$n1" ; i++)); do
+        date
+        time
+done
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej12_script.sh
+MOSTRADOR DE FECHAS
+Dime un numero3
+Tue Nov  5 09:04:24 AM UTC 2024
+
+real    0m0.000s
+user    0m0.000s
+sys     0m0.000s
+Tue Nov  5 09:04:24 AM UTC 2024
+
+real    0m0.000s
+user    0m0.000s
+sys     0m0.000s
+Tue Nov  5 09:04:24 AM UTC 2024
+
+real    0m0.000s
+user    0m0.000s
+sys     0m0.000s
+vagrant@ubuntu2204:~/ejercicios_bucles$ 
 ```
