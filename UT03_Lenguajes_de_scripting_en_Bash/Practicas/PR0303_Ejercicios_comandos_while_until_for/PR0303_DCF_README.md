@@ -164,4 +164,82 @@ vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej5_script.sh
 
 ### Código del script
 
+```bash
+#!/bin/bash
+
+echo "SUMADOR DE DIGITOS"
+
+read -p "Dime un numero: " num
+
+suma=0
+
+while [ -n "$num" ];
+do
+        digito=${num: -1}
+
+        suma=$((suma + digito))
+
+        num=${num:0:${#num}-1}
+done
+
+echo "La suma de los digitos es: $suma"
+```
+
 ### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej6_script.sh
+SUMADOR DE DIGITOS
+Dime un numero: 123
+La suma de los digitos es: 6
+vagrant@ubuntu2204:~/ejercicios_bucles$
+```
+
+
+## Ejercicio 7: cuenta regresiva
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+echo "CUENTA REGRESIVA"
+
+read -p "Dame un numero: " numero
+
+until [ $numero -lt 0 ]
+do
+        echo "$numero"
+        numero=$(( $numero - 1 ))
+done
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej7_script.sh 
+CUENTA REGRESIVA
+Dame un numero: 7
+7
+6
+5
+4
+3
+2
+1
+0
+```
+
+## Ejercicio 8: Imprimir solo archivos.txt
+
+### Código del script
+
+```bash
+
+```
+
+### Ejecución del script
+
+```bash
+
+```
