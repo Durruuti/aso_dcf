@@ -406,3 +406,264 @@ user    0m0.000s
 sys     0m0.000s
 vagrant@ubuntu2204:~/ejercicios_bucles$ 
 ```
+
+## Ejercicio 13: Promedio de numeros ingresados
+
+### Código del script
+
+```bash
+ª/bin/bash
+
+echo "CALCULADOR DE PROMEDIO"
+
+suma=0
+contador=0
+
+while [ $numweo  != "fin" ] do
+        read -p "Introduce un número [Introduce fin para calcular]" numero
+
+        suma=$(echo "$suma + $numero" | bc)
+        contador=$((contador + 1 ))
+done
+
+if [ $contador -gt 0 ];
+then
+        promedio=$(echo "scale=2; $suma / $contador" | bc)
+        echo "El promedio de los numeros introducidos es: $promedio"
+else
+        echo "introduce numeros"
+fi
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/ejercicios_bucles$ sudo bash ej13_script.sh
+CALCULADOR DE PROMEDIO
+Introduce un número [Introduce fin para calcular]23
+Introduce un número [Introduce fin para calcular]2
+Introduce un número [Introduce fin para calcular]4
+Introduce un número [Introduce fin para calcular]fin
+El promedio de los numeros introducidos es: 9.66
+```
+
+## Ejercicio 14: Contar palabras de una cadena
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+read -p "Introduce la cadena: " cadena
+
+i=0
+
+for palabra in $cadena; do
+        i=$((i + 1))
+done
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicionales$ sudo bash ej14_script.sh  
+Introduce la cadena: hola buenos dias
+La cadena tiene 3 palabras
+```
+
+## Ejercicio 15: Juego de adivinar con limites dinámicos
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+num=$((RANDOM % 100 + 1))
+
+echo "EL GENIO DE LOS NUMEROS"
+
+echo "¿Conseguiras adivinarme el numero?"
+
+adiv=0
+
+while [ $adiv -ne $num ]; do
+        read -p "Intenta adivinar el numero que tengo en la cabeza! " adiv
+        if [ $adiv -lt $num ]; then
+                echo "El numero que buscas es mayor"
+        elif [ $adiv -gt $num ]; then
+                echo "El numero que buscas es menor"
+        else
+                echo "Vaya! Lo adivinastes!"
+        fi
+done
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicionales$ sudo bash ej15_script.sh  
+EL GENIO DE LOS NUMEROS
+¿Conseguiras adivinarme el numero?
+Intenta adivinar el numero que tengo en la cabeza! 13
+El numero que buscas es mayor
+Intenta adivinar el numero que tengo en la cabeza! 3
+El numero que buscas es mayor
+Intenta adivinar el numero que tengo en la cabeza! 4
+El numero que buscas es mayor
+Intenta adivinar el numero que tengo en la cabeza! 5
+El numero que buscas es mayor
+Intenta adivinar el numero que tengo en la cabeza! 85
+El numero que buscas es menor
+Intenta adivinar el numero que tengo en la cabeza! 59
+El numero que buscas es menor
+Intenta adivinar el numero que tengo en la cabeza! ^C
+vagrant@ubuntu2204:~/condicionales$ 
+```
+
+
+## Ejercicio 16: Archivo con nombres de directorios
+
+### Código del script
+
+```bash
+#!/bin/bash
+> directorios.txt
+for dir in */; do
+
+        if [ -d "$dir" ]; then
+                echo "${dir%/}" >> directorios.txt
+        fi
+
+done
+
+
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicionales$ mkdir hola1
+vagrant@ubuntu2204:~/condicionales$ sudo bash ej16_script.sh 
+Todos los nombres del directorio se guardaron en directorios.txt
+vagrant@ubuntu2204:~/condicionales$ cat directorios.txt 
+hola1
+hola2
+vagrant@ubuntu2204:~/condicionales$ 
+```
+
+
+## Ejercicio 17: Crear x numero de archivos
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+
+echo "Generador de archivos"
+
+read -p "Dime un numero [0-10]" num
+
+for ((i=0; i <=num; i++)); do
+        touch "archivo".$i.".txt"
+done
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicionales$ sudo bash ej17_script.sh 
+Generador de archivos
+Dime un numero [0-10]3
+Se han creado 4 archivos
+vagrant@ubuntu2204:~/condicionales$ ls
+archivo.0..txt  archivo.1..txt  archivo.2..txt  archivo.3..txt 
+```
+
+## Ejercicio 18: Contar vocales
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+echo "Contador de vocales en una cadena"
+
+read -p "Dame una cadena de texto: " cadena
+
+# Inicializar el contador de vocales
+contador_vocales=0
+
+# Usar un bucle for para iterar sobre cada letra de la cadena
+for ((i=0; i<${#cadena}; i++)); do
+    letra="${cadena:i:1}"
+    if [[ "$letra" =~ [aeiouAEIOU] ]]; then
+        contador_vocales=$((contador_vocales + 1))  # Incrementar el contador de vocales
+    fi
+done
+
+echo "La cadena: '$cadena' tiene $contador_vocales vocales."
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicionales$ sudo bash ej18_script.sh 
+Contador de vocales en una cadena
+Dame una cadena de texto: hola
+La cadena: 'hola' tiene 2 vocales.
+```
+
+
+## Ejercicio 19: Validación de entrada
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+numerito=0
+
+until [[ $numerito -ge 1 && $numerito -le 10 ]]; do
+        read -p "Dame un numero [1-10]: " numerito
+done
+
+echo "Muy bien me diste un numero entre 1 y 10! -->  $numerito"
+```
+
+### Ejecución del script
+
+```bash
+vagrant@ubuntu2204:~/condicionales$ sudo bash ej19_script.sh
+Dame un numero [1-10]: 3
+Muy bien me diste un numero entre 1 y 10! -->  3
+vagrant@ubuntu2204:~/condicionales$ 
+```
+
+## Ejercicio 20: Script de copia de seguridad
+
+### Código del script
+
+```bash
+#!/bin/bash
+
+mkdir -p backup
+
+for texto in *.txt; do
+        if [[ -f "$texto" ]];then
+                cp "$texto" backup/
+        fi
+done
+
+echo "Los archivos de texto han sido guardados en la carpeta 'backup' "
+```
+
+### Ejecución del script
+
+```bash
+agrant@ubuntu2204:~/condicionales$ sudo bash ej20_script.sh 
+Los archivos de texto han sido guardados en la carpeta 'backup' 
+vagrant@ubuntu2204:~/condicionales$ ls backup/
+archivo.0..txt  archivo.1..txt  archivo.2..txt  archivo.3..txt  directorios.txt  hola.txt
+vagrant@ubuntu2204:~/condicionales$ 
+```

@@ -486,3 +486,4 @@ Comprobando el estado del servicio
              └─599 /usr/sbin/cron -f -P
 
 ```
+
