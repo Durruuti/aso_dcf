@@ -7,4 +7,4 @@
 
 # Proyectos
 
-[Proyectos](Proyectos/)
+[Proyectos](Proyectos/Index.md)
