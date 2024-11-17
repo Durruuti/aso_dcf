@@ -23,10 +23,7 @@ Uso: sudo bash ./netscanner.sh <rango_ip> [-o archivo_salida]
 Opciones:
   <rango_ip>              Rango de IP para escanear (por ejemplo, 192.168.1.0/24).
   -o, --output <archivo>  Especifica el archivo donde guardar la salida.
-<<<<<<< HEAD
   -t                      Registra el tiempo que tarda el script en ejecutarse
-=======
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
   -h, --help              Muestra este menú de ayuda.
 
 Descripción:
@@ -39,7 +36,6 @@ EOF
     exit 0
 }
 
-<<<<<<< HEAD
 
 archivo=""
 dir_red=""
@@ -72,15 +68,10 @@ done
 
 if [[ -z "$dir_red" ]]; then
     echo "Error: Debes de especificar una dirección de red ; (Ejemplo: 192.168.1.0/24)"
-=======
-if [[ $# -lt 1 ]]; then
-    echo "Error: Debes de especificar una direccion de red ; (Ejemplo: 192.168.1.0/24)"
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
     echo -e "\n"
     mostrar_ayuda
 fi
 
-<<<<<<< HEAD
 
 
 # if [[ $# -lt 1 ]]; then
@@ -92,11 +83,6 @@ fi
 # if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 #     mostrar_ayuda
 # fi
-=======
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    mostrar_ayuda
-fi
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
 
 
 ip=""
@@ -144,17 +130,12 @@ ip_valida() {
     fi
 }
 
-<<<<<<< HEAD
 ip_valida "$dir_red"
-=======
-ip_valida "$1"
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
 
 echo "Dirección Ip: $ip"
 echo "Máscara de subred: $mascara"
 
 echo -e "\n"
-<<<<<<< HEAD
 
 declare -A puertos
 while read -r linea; do
@@ -171,12 +152,6 @@ done < tcp.csv
 ping_a_ips() {
 
     echo "Escaneando red! $1"
-=======
-ping_a_ips() {
-
-    echo "Escaneando red! $1"
-
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
     case $mascara in
         8)
             for i in {0..255};do
@@ -192,7 +167,6 @@ ping_a_ips() {
                             else
                                 so="Otro/Desconocido"
                             fi
-<<<<<<< HEAD
                             linea_servicio=" [+]  $octeto1.$octeto2.$octeto3.$i  ------------------------- TTL= $ttl ----- SO= $so"
                             echo "$linea_servicio"
                             if [[ -n "$archivo" ]]; then
@@ -210,9 +184,6 @@ ping_a_ips() {
                                 } &
                             done
                             wait
-=======
-                            echo "Ping a $octeto1.$k.$j.$i exitoso! (TTL = $ttl ; SO= $so)"
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
                         else
                             echo "Ping fallido!" &> /dev/null
                         fi
@@ -233,7 +204,6 @@ ping_a_ips() {
                         else
                             so="Otro/Desconocido"
                         fi
-<<<<<<< HEAD
                         linea_servicio=" [+]  $octeto1.$octeto2.$j.$i  ------------------------- TTL= $ttl ----- SO= $so"
                         echo "$linea_servicio"
                         if [[ -n "$archivo" ]]; then
@@ -251,9 +221,6 @@ ping_a_ips() {
                             } &
                         done
                         wait
-=======
-                        echo "Ping a $octeto1.$octeto2.$j.$i exitoso! (TTL = $ttl ; SO= $so)"
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
                     else
                         echo "Ping fallido!" &> /dev/null
                     fi
@@ -272,7 +239,6 @@ ping_a_ips() {
                     else
                         so="Otro/Desconocido"
                     fi
-<<<<<<< HEAD
                     linea_servicio=" [+]  $octeto1.$octeto2.$octeto3.$i  ------------------------- TTL= $ttl ----- SO= $so"
                     echo "$linea_servicio"
                     if [[ -n "$archivo" ]]; then
@@ -290,9 +256,6 @@ ping_a_ips() {
                         } &
                     done
                     wait
-=======
-                    echo "Ping a $octeto1.$octeto2.$octeto3.$i exitoso! (TTL = $ttl ; SO= $so)"
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
                 else
                     echo "Ping fallido!" &> /dev/null
                 fi
@@ -301,7 +264,6 @@ ping_a_ips() {
     esac
 }
 
-<<<<<<< HEAD
 echo -e "\n"
 
 if $registrar_tiempo; then
@@ -324,6 +286,3 @@ echo "Escaneo completado"
 if [[ -n "$archivo" ]]; then
     echo "Tienes el output en $archivo"
 fi
-=======
-ping_a_ips
->>>>>>> 637932286ce90ca58750156f892a27689ef8c01b
