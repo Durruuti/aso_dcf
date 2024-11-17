@@ -27,8 +27,7 @@ Opciones:
   -h, --help              Muestra este menú de ayuda.
 
 Descripción:
-  Este script escanea un rango de direcciones IP y, opcionalmente, guarda el
-  resultado en un archivo si se especifica la opción '-o' o '--output'.
+  Este script escanea un rango de direcciones IP 
 
 Ejemplo:
   sudo bash ./netscanner.sh 192.168.1.0/24 -o resultado.txt
