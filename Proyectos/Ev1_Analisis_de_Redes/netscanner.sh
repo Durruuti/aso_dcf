@@ -12,39 +12,43 @@ echo " |____/ \\___\\__,_|_| |_|_| |_|\\___|_|   "
 echo "                                         "
 echo "    by Diego Calles Fernández "
 
-
 echo -e "\n\n"
-
 
 mostrar_ayuda() {
     cat << EOF
-Uso: sudo bash ./netscanner.sh <rango_ip> [-o archivo_salida]
+Uso: sudo bash ./netscanner.sh <rango_ip> [-o archivo_salida] [-m]
 
 Opciones:
   <rango_ip>              Rango de IP para escanear (por ejemplo, 192.168.1.0/24).
   -o, --output <archivo>  Especifica el archivo donde guardar la salida.
-  -t                      Registra el tiempo que tarda el script en ejecutarse
+  -m                      Muestra la dirección MAC de cada equipo. [Si salta error deberas instalar las net-tools en tu equipo Linux]
+  -t                      Registra el tiempo que tarda el script en ejecutarse.
   -h, --help              Muestra este menú de ayuda.
 
 Descripción:
-  Este script escanea un rango de direcciones IP 
+  Este script escanea un rango de direcciones IP y, opcionalmente, guarda el
+  resultado en un archivo si se especifica la opción '-o' o '--output'.
 
 Ejemplo:
-  sudo bash ./netscanner.sh 192.168.1.0/24 -o resultado.txt
+  sudo bash ./netscanner.sh 192.168.1.0/24 -o resultado.txt -m
 EOF
     exit 0
 }
 
-
 archivo=""
 dir_red=""
 registrar_tiempo=false
+mostrar_mac=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         -o|--output)
             archivo="$2"
             shift 2
+            ;;
+        -m)
+            mostrar_mac=true
+            shift
             ;;
         -t)
             registrar_tiempo=true
@@ -57,7 +61,7 @@ while [[ $# -gt 0 ]]; do
             if [[ -z "$dir_red" ]]; then
                 dir_red="$1"
             else
-                echo "Error: Sólo puedes introducir un rango de IP"
+                echo "Error: Solo puedes introducir un rango de IP"
                 exit 1
             fi
             shift
@@ -71,19 +75,6 @@ if [[ -z "$dir_red" ]]; then
     mostrar_ayuda
 fi
 
-
-
-# if [[ $# -lt 1 ]]; then
-#     echo "Error: Debes de especificar una direccion de red ; (Ejemplo: 192.168.1.0/24)"
-#     echo -e "\n"
-#     mostrar_ayuda
-# fi
-
-# if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-#     mostrar_ayuda
-# fi
-
-
 ip=""
 mascara=""
 puertos=""
@@ -91,12 +82,11 @@ puertos=""
 ip_valida() {
     ip_completa=$1
 
-    if [[ "$ip_completa" == *"/"* ]];then
-
+    if [[ "$ip_completa" == *"/"* ]]; then
         ip=$(echo "$ip_completa" | cut -d "/" -f 1)
         mascara=$(echo "$ip_completa" | cut -d "/" -f 2)
 
-        #Máscara de red valida
+        # Máscara de red válida
         if [[ ! "$mascara" =~ ^(8|16|24)$ ]]; then
             echo "Máscara de subred inválida. Debe ser /8, /16 o /24."
             exit 1
@@ -108,21 +98,16 @@ ip_valida() {
         octeto4=$(echo "$ip" | cut -d "." -f 4)
 
         if ((octeto1 >= 0 && octeto1 <= 255)) && ((octeto2 >= 0 && octeto2 <= 255)) && ((octeto3 >= 0 && octeto3 <= 255)) && ((octeto4 >= 0 && octeto4 <= 255)); then
-            
             if [[ "$octeto4" -eq 0 ]]; then
-
-            echo ""
-
+                echo ""
             else
                 echo "La ip tiene que acabar en 0."
-                exit 1
+                exit  1
             fi
-
         else
             echo "Cada octeto no puede superar 255"
             exit 1
         fi
-
     else
         echo "Formato no válido. Formato: ip/mascara (192.168.1.0/24)"
         exit 1
@@ -146,16 +131,13 @@ while read -r linea; do
     puertos["$puerto"]="$descripcion"
 done < tcp.csv
 
-
-
 ping_a_ips() {
-
     echo "Escaneando red! $1"
     case $mascara in
         8)
-            for i in {0..255};do
-                for j in {0..255};do
-                    for k in {0..255};do
+            for i in {0..255}; do
+                for j in {0..255}; do
+                    for k in {0..255}; do
                         respuesta=$(ping -c 1 -w 1 "$octeto1.$k.$j.$i" && echo "Ping a $octeto1.$k.$j.$i exitoso")
                         if [[ $? -eq 0 ]]; then
                             ttl=$(echo "$respuesta" | grep -oP 'ttl=\K[0-9]+')
@@ -166,20 +148,29 @@ ping_a_ips() {
                             else
                                 so="Otro/Desconocido"
                             fi
-                            linea_servicio=" [+]  $octeto1.$octeto2.$octeto3.$i  ------------------------- TTL= $ttl ----- SO= $so"
+                            linea_servicio=" [+]  $octeto1.$k.$j.$i  ------------------------- TTL= $ttl ----- SO= $so"
                             echo "$linea_servicio"
                             if [[ -n "$archivo" ]]; then
                                 echo "$linea_servicio" >> "$archivo"
                             fi
-                            for puerto in "${!puertos[@]}"; do
-                                {
-                                    if nc -z -w 1 "$octeto1.$octeto2.$octeto3.$i" "$puerto" 2>/dev/null; then
-                                    linea_servicio=" Puerto: $puerto -------------------------- Servicio: ${puertos[$puerto]}"
-                                    echo "$linea_servicio"
+                            if $mostrar_mac; then
+                                mac=$(arp -n "$octeto1.$k.$j.$i" | awk '/^[^ ]/ {print $3}')
+                                if [[ -n "$mac" ]]; then
+                                    echo " Dirección MAC: ($mac)"
                                     if [[ -n "$archivo" ]]; then
-                                        echo "$linea_servicio" >> "$archivo"
+                                        echo " Dirección MAC: ($mac)" >> "$archivo"
                                     fi
                                 fi
+                            fi
+                            for puerto in "${!puertos[@]}"; do
+                                {
+                                    if nc -z -w 1 "$octeto1.$k.$j.$i" "$puerto" 2>/dev/null; then
+                                        linea_servicio=" Puerto: $puerto -------------------------- Servicio: ${puertos[$puerto]}"
+                                        echo "$linea_servicio"
+                                        if [[ -n "$archivo" ]]; then
+                                            echo "$linea_servicio" >> "$archivo"
+                                        fi
+                                    fi
                                 } &
                             done
                             wait
@@ -191,8 +182,8 @@ ping_a_ips() {
             done
             ;;
         16)
-            for i in {0..255};do
-                for j in {0..255};do
+            for i in {0..255}; do
+                for j in {0..255}; do
                     respuesta=$(ping -c 1 -w 1 "$octeto1.$octeto2.$j.$i" && echo "Ping a $octeto1.$octeto2.$j.$i exitoso")
                     if [[ $? -eq 0 ]]; then
                         ttl=$(echo "$respuesta" | grep -oP 'ttl=\K[0-9]+')
@@ -207,6 +198,15 @@ ping_a_ips() {
                         echo "$linea_servicio"
                         if [[ -n "$archivo" ]]; then
                             echo "$linea_servicio" >> "$archivo"
+                        fi
+                        if $mostrar_mac; then
+                            mac=$(arp -n "$octeto1.$octeto2.$j.$i" | awk '/^[^ ]/ {print $3}')
+                            if [[ -n "$mac" ]]; then
+                                echo " Dirección MAC: ($mac)"
+                                if [[ -n "$archivo" ]]; then
+                                    echo " Dirección MAC : ($mac)" >> "$archivo"
+                                fi
+                            fi
                         fi
                         for puerto in "${!puertos[@]}"; do
                             {
@@ -243,6 +243,15 @@ ping_a_ips() {
                     if [[ -n "$archivo" ]]; then
                         echo "$linea_servicio" >> "$archivo"
                     fi
+                    if $mostrar_mac; then
+                        mac=$(arp -n "$octeto1.$octeto2.$octeto3.$i" | awk 'NR>1 {print $3}')
+                        if [[ -n "$mac" ]]; then
+                            echo " Dirección MAC: ($mac)"
+                            if [[ -n "$archivo" ]]; then
+                                echo " Dirección MAC: ($mac)" >> "$archivo"
+                            fi
+                        fi
+                    fi
                     for puerto in "${!puertos[@]}"; do
                         {
                             if nc -z -w 1 "$octeto1.$octeto2.$octeto3.$i" "$puerto" 2>/dev/null; then
@@ -271,13 +280,10 @@ fi
 
 ping_a_ips "$dir_red"
 
-
-
 if $registrar_tiempo; then
     fin=$(date +%s)
     duracion=$((fin - inicio))
-    echo "Tiempo de ejecución : $duracion s"
-
+    echo "Tiempo de ejecución: $duracion segundos"
 fi
 
 echo "Escaneo completado"
