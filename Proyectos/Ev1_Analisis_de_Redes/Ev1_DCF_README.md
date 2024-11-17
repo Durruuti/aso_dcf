@@ -1,4 +1,4 @@
-[Volver al índice](../index.md)
+[Volver al indice](../index.md)
 
 # Documentación NETSCANNER by Diego Calles Fernández
 
