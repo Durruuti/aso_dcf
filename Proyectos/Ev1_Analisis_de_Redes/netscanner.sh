@@ -21,6 +21,7 @@ Uso: sudo bash ./netscanner.sh <rango_ip> [-o archivo_salida] [-m]
 Opciones:
   <rango_ip>              Rango de IP para escanear (por ejemplo, 192.168.1.0/24).
   -o, --output <archivo>  Especifica el archivo donde guardar la salida.
+  --json                  Guarda la salida en formato JSON. NO SE PUEDE UTILIZAR A LA VEZ QUE EL ATRIBUTO -o
   -m                      Muestra la dirección MAC de cada equipo. [Si salta error deberas instalar las net-tools en tu equipo Linux]
   -t                      Registra el tiempo que tarda el script en ejecutarse.
   -h, --help              Muestra este menú de ayuda.
@@ -31,6 +32,7 @@ Descripción:
 
 Ejemplo:
   sudo bash ./netscanner.sh 192.168.1.0/24 -o resultado.txt -m
+  sudo bash ./netscanner.sh 192.168.1.0/24 --json -m
 EOF
     exit 0
 }
@@ -39,12 +41,22 @@ archivo=""
 dir_red=""
 registrar_tiempo=false
 mostrar_mac=false
+usar_json=false
+archivo_json="[]"
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         -o|--output)
             archivo="$2"
             shift 2
+            ;;
+        --json)
+            if [[ -n "$archivo" ]]; then
+                echo "Eror general! No se puede utilizar --json junto al atributo -o"
+                exit 1
+            fi
+            usar_json=true
+            shift
             ;;
         -m)
             mostrar_mac=true
@@ -150,14 +162,18 @@ ping_a_ips() {
                             fi
                             linea_servicio=" [+]  $octeto1.$k.$j.$i  ------------------------- TTL= $ttl ----- SO= $so"
                             echo "$linea_servicio"
-                            if [[ -n "$archivo" ]]; then
+                            if $usar_json; then
+                                archivo_json=$(echo "$archivo_json" | jq --arg ip "$octeto1.$k.$j.$i" --arg ttl "$ttl" --arg so "$so" '. += [{"ip": $ip, "ttl": $ttl | tonumber, "so": $so}]')
+                            elif [[ -n "$archivo" ]]; then
                                 echo "$linea_servicio" >> "$archivo"
                             fi
                             if $mostrar_mac; then
                                 mac=$(arp -n "$octeto1.$k.$j.$i" | awk '/^[^ ]/ {print $3}')
                                 if [[ -n "$mac" ]]; then
                                     echo " Dirección MAC: ($mac)"
-                                    if [[ -n "$archivo" ]]; then
+                                    if $usar_json; then
+                                        archivo_json=$(echo "$archivo_json" | jq --arg mac "$mac" '.[-1].mac = $mac')
+                                    elif [[ -n "$archivo" ]]; then
                                         echo " Dirección MAC: ($mac)" >> "$archivo"
                                     fi
                                 fi
@@ -167,7 +183,9 @@ ping_a_ips() {
                                     if nc -z -w 1 "$octeto1.$k.$j.$i" "$puerto" 2>/dev/null; then
                                         linea_servicio=" Puerto: $puerto -------------------------- Servicio: ${puertos[$puerto]}"
                                         echo "$linea_servicio"
-                                        if [[ -n "$archivo" ]]; then
+                                        if $usar_json; then
+                                            archivo_json=$(echo "$archivo_json" | jq --arg puerto "$puerto" --arg servicio "${puertos[$puerto]}" '. += [{"puerto": $puerto, "servicio": $servicio}]')
+                                        elif [[ -n "$archivo" ]]; then
                                             echo "$linea_servicio" >> "$archivo"
                                         fi
                                     fi
@@ -196,14 +214,18 @@ ping_a_ips() {
                         fi
                         linea_servicio=" [+]  $octeto1.$octeto2.$j.$i  ------------------------- TTL= $ttl ----- SO= $so"
                         echo "$linea_servicio"
-                        if [[ -n "$archivo" ]]; then
+                        if $usar_json; then
+                            archivo_json=$(echo "$archivo_json" | jq --arg ip "$octeto1.$octeto2.$j.$i" --arg ttl "$ttl" --arg so "$so" '. += [{"ip": $ip, "ttl": $ttl | tonumber, "so": $so}]')
+                        elif [[ -n "$archivo" ]]; then
                             echo "$linea_servicio" >> "$archivo"
                         fi
                         if $mostrar_mac; then
                             mac=$(arp -n "$octeto1.$octeto2.$j.$i" | awk '/^[^ ]/ {print $3}')
                             if [[ -n "$mac" ]]; then
                                 echo " Dirección MAC: ($mac)"
-                                if [[ -n "$archivo" ]]; then
+                                if $usar_json; then
+                                    archivo_json=$(echo "$archivo_json" | jq --arg mac "$mac" '.[-1].mac = $mac')
+                                elif [[ -n "$archivo" ]]; then
                                     echo " Dirección MAC : ($mac)" >> "$archivo"
                                 fi
                             fi
@@ -213,7 +235,9 @@ ping_a_ips() {
                                 if nc -z -w 1 "$octeto1.$octeto2.$j.$i" "$puerto" 2>/dev/null; then
                                     linea_servicio=" Puerto: $puerto -------------------------- Servicio: ${puertos[$puerto]}"
                                     echo "$linea_servicio"
-                                    if [[ -n "$archivo" ]]; then
+                                    if $usar_json; then
+                                        archivo_json=$(echo "$archivo_json" | jq --arg puerto "$puerto" --arg servicio "${puertos[$puerto]}" '. += [{"puerto": $puerto, "servicio": $servicio}]')
+                                    elif [[ -n "$archivo" ]]; then
                                         echo "$linea_servicio" >> "$archivo"
                                     fi
                                 fi
@@ -240,14 +264,18 @@ ping_a_ips() {
                     fi
                     linea_servicio=" [+]  $octeto1.$octeto2.$octeto3.$i  ------------------------- TTL= $ttl ----- SO= $so"
                     echo "$linea_servicio"
-                    if [[ -n "$archivo" ]]; then
+                    if $usar_json; then
+                        archivo_json=$(echo "$archivo_json" | jq --arg ip "$octeto1.$octeto2.$octeto3.$i" --arg ttl "$ttl" --arg so "$so" '. += [{"ip": $ip, "ttl": $ttl | tonumber, "so": $so}]')
+                    elif [[ -n "$archivo" ]]; then
                         echo "$linea_servicio" >> "$archivo"
                     fi
                     if $mostrar_mac; then
                         mac=$(arp -n "$octeto1.$octeto2.$octeto3.$i" | awk 'NR>1 {print $3}')
                         if [[ -n "$mac" ]]; then
                             echo " Dirección MAC: ($mac)"
-                            if [[ -n "$archivo" ]]; then
+                            if $usar_json; then
+                                archivo_json=$(echo "$archivo_json" | jq --arg mac "$mac" '.[-1].mac = $mac')
+                            elif [[ -n "$archivo" ]]; then
                                 echo " Dirección MAC: ($mac)" >> "$archivo"
                             fi
                         fi
@@ -257,7 +285,9 @@ ping_a_ips() {
                             if nc -z -w 1 "$octeto1.$octeto2.$octeto3.$i" "$puerto" 2>/dev/null; then
                                 linea_servicio=" Puerto: $puerto -------------------------- Servicio: ${puertos[$puerto]}"
                                 echo "$linea_servicio"
-                                if [[ -n "$archivo" ]]; then
+                                if $usar_json; then
+                                    archivo_json=$(echo "$archivo_json" | jq --arg puerto "$puerto" --arg servicio "${puertos[$puerto]}" '. += [{"puerto": $puerto, "servicio": $servicio}]')
+                                elif [[ -n "$archivo" ]]; then
                                     echo "$linea_servicio" >> "$archivo"
                                 fi
                             fi
@@ -279,6 +309,11 @@ if $registrar_tiempo; then
 fi
 
 ping_a_ips "$dir_red"
+
+if $usar_json; then
+    echo "$archivo_json" > "exportacion.json"
+    echo "Los resultados se han guardado en 'exportacion.json'."
+fi
 
 if $registrar_tiempo; then
     fin=$(date +%s)
