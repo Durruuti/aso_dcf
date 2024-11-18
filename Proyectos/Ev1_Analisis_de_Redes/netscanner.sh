@@ -250,55 +250,56 @@ ping_a_ips() {
                 done
             done
             ;;
-        24)
-            for i in {1..254}; do
-                respuesta=$(ping -c 1 -w 1 "$octeto1.$octeto2.$octeto3.$i" && echo "Ping a $octeto1.$octeto2.$octeto3.$i exitoso")
-                if [[ $? -eq 0 ]]; then
-                    ttl=$(echo "$respuesta" | grep -oP 'ttl=\K[0-9]+')
-                    if [[ "$ttl" == "64" ]]; then
-                        so="Linux"
-                    elif [[ "$ttl" == "128" ]]; then
-                        so="Windows"
-                    else
-                        so="Otro/Desconocido"
-                    fi
-                    linea_servicio=" [+]  $octeto1.$octeto2.$octeto3.$i  ------------------------- TTL= $ttl ----- SO= $so"
-                    echo "$linea_servicio"
-                    if $usar_json; then
-                        archivo_json=$(echo "$archivo_json" | jq --arg ip "$octeto1.$octeto2.$octeto3.$i" --arg ttl "$ttl" --arg so "$so" '. += [{"ip": $ip, "ttl": $ttl | tonumber, "so": $so}]')
-                    elif [[ -n "$archivo" ]]; then
-                        echo "$linea_servicio" >> "$archivo"
-                    fi
-                    if $mostrar_mac; then
-                        mac=$(arp -n "$octeto1.$octeto2.$octeto3.$i" | awk 'NR>1 {print $3}')
-                        if [[ -n "$mac" ]]; then
-                            echo " Dirección MAC: ($mac)"
+    24)
+        for i in {1..254}; do
+            ip="$octeto1.$octeto2.$octeto3.$i"
+            if respuesta=$(ping -c 1 -w 1 "$ip" && echo "Ping a $ip exitoso"); then
+                ttl=$(echo "$respuesta" | grep -oP 'ttl=\K[0-9]+')
+                case "$ttl" in
+                    64) so="Linux" ;;
+                    128) so="Windows" ;;
+                    *) so="Otro/Desconocido" ;;
+                esac
+                
+                linea_servicio=" [+]  $ip  ------------------------- TTL= $ttl ----- SO= $so"
+                echo "$linea_servicio"
+                if $usar_json; then
+                    archivo_json=$(echo "$archivo_json" | jq --arg ip "$ip" --arg ttl "$ttl" --arg so "$so" '. += [{"ip": $ip, "ttl": $ttl | tonumber, "so": $so}]')
+                elif [[ -n "$archivo" ]]; then
+                    echo "$linea_servicio" >> "$archivo"
+                fi
+                
+                if $mostrar_mac; then
+                    mac=$(arp -n "$ip" | awk 'NR>1 {print $3}')
+                    [[ -n "$mac" ]] && {
+                        echo " Dirección MAC: ($mac)"
+                        if $usar_json; then
+                            archivo_json=$(echo "$archivo_json" | jq --arg mac "$mac" '.[-1].mac = $mac')
+                        elif [[ -n "$archivo" ]]; then
+                            echo " Dirección MAC: ($mac)" >> "$archivo"
+                        fi
+                    }
+                fi
+                
+                for puerto in "${!puertos[@]}"; do
+                    {
+                        if nc -z -w 1 "$ip" "$puerto" 2>/dev/null; then
+                            linea_servicio=" Puerto: $puerto -------------------------- Servicio: ${puertos[$puerto]}"
+                            echo "$linea_servicio"
                             if $usar_json; then
-                                archivo_json=$(echo "$archivo_json" | jq --arg mac "$mac" '.[-1].mac = $mac')
+                                archivo_json=$(echo "$archivo_json" | jq --arg puerto "$puerto" --arg servicio "${puertos[$puerto]}" '. += [{"puerto": $puerto, "servicio": $servicio}]')
                             elif [[ -n "$archivo" ]]; then
-                                echo " Dirección MAC: ($mac)" >> "$archivo"
+                                echo "$linea_servicio" >> "$archivo"
                             fi
                         fi
-                    fi
-                    for puerto in "${!puertos[@]}"; do
-                        {
-                            if nc -z -w 1 "$octeto1.$octeto2.$octeto3.$i" "$puerto" 2>/dev/null; then
-                                linea_servicio=" Puerto: $puerto -------------------------- Servicio: ${puertos[$puerto]}"
-                                echo "$linea_servicio"
-                                if $usar_json; then
-                                    archivo_json=$(echo "$archivo_json" | jq --arg puerto "$puerto" --arg servicio "${puertos[$puerto]}" '. += [{"puerto": $puerto, "servicio": $servicio}]')
-                                elif [[ -n "$archivo" ]]; then
-                                    echo "$linea_servicio" >> "$archivo"
-                                fi
-                            fi
-                        } &
-                    done
-                    wait
-                else
-                    echo "Ping fallido!" &> /dev/null
-                fi
-            done
-            ;;
+                    } &
+                done
+                wait
+            else
+                echo "Ping fallido!" &> /dev/null
+            fi
+        done
+        ;;
     esac
 }
 
