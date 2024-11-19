@@ -3,7 +3,9 @@
 # NetScanner by Diego Calles Fernández
 ## Proyecto 1ª Evaluación ASO
 
-Programa escrito en *Bash* que analiza direcciones de red de tipo `/8`, `/16` y `/24` en busca de equipos. Además, el programa examina los puertos abiertos de dichos equipos. 🔍
+Programa escrito en *Bash* que permite escanear direcciones IP dentro de un rango de red de tipo `/8`, `/16` o `/24`, buscando equipos activos y escaneando los puertos abiertos en esos dispositivos. Además, ofrece la opción de registrar las direcciones MAC y el tiempo de ejecución.
+
+---
 
 ## Índice
 
@@ -13,131 +15,204 @@ Programa escrito en *Bash* que analiza direcciones de red de tipo `/8`, `/16` y 
   - [Explicación](#explicación)
     - [El código](#el-código)
       - [Funciones](#funciones)
-        - [mostrar\_ayuda](#mostrar_ayuda)
+        - [`mostrar_ayuda`](#mostrar_ayuda)
           - [Descripción del Funcionamiento](#descripción-del-funcionamiento)
-        - [ip\_valida](#ip_valida)
+        - [`ip_valida`](#ip_valida)
           - [Descripción del Funcionamiento](#descripción-del-funcionamiento-1)
-        - [arp](#arp)
-          - [Descripción del funcionamiento](#descripción-del-funcionamiento-2)
-        - [Función Principal (Bucle principal)](#función-principal-bucle-principal)
-          - [Descripción del funcionamiento](#descripción-del-funcionamiento-3)
+        - [`arp`](#arp)
+          - [Descripción del Funcionamiento](#descripción-del-funcionamiento-2)
+        - [Función Principal (Bucle Principal)](#función-principal-bucle-principal)
+          - [Descripción del Funcionamiento](#descripción-del-funcionamiento-3)
   - [Requisitos](#requisitos)
     - [1. **SO**](#1-so)
     - [2. **Dependencias**](#2-dependencias)
     - [3. **Permisos**](#3-permisos)
   - [Troubleshooting](#troubleshooting)
+    - [Error: "script no se ejecuta correctamente"](#error-script-no-se-ejecuta-correctamente)
+    - [Condición importante: "No está permitido el uso conjunto de -o y de --json"](#condición-importante-no-está-permitido-el-uso-conjunto-de--o-y-de---json)
+    - [Error: "Máscara de subred inválida"](#error-máscara-de-subred-inválida)
+  - [Ejemplos de uso](#ejemplos-de-uso)
+    - [Ejemplos de ejecución:](#ejemplos-de-ejecución)
+
+---
 
 ## Explicación
 
-Este script escanea un rango de direcciones IP y, opcionalmente, guarda el resultado en un archivo si se especifica la opción `-o` o `--output`. También puede mostrar la dirección MAC de cada equipo y registrar el tiempo de ejecución. ⏱️
+Este script realiza un escaneo de red de acuerdo con el rango de IP proporcionado, buscando dispositivos activos mediante *ping*, identificando el sistema operativo de los dispositivos y escaneando los puertos abiertos. También puede generar un archivo de salida con los resultados y/o exportar la información en formato JSON.
+
+---
 
 ### El código
 
 #### Funciones
- 
-##### mostrar_ayuda
 
-La función `mostrar_ayuda` se encarga de mostrar un menú de ayuda al usuario. Esta función se activa cuando el usuario solicita ayuda o cuando se producen errores en los argumentos de entrada. 
+##### `mostrar_ayuda`
 
-###### Descripción del Funcionamiento
-
-1. **Uso y Opciones:** Muestra cómo usar el script, los parámetros aceptados y ejemplos de uso.
-2. **Descripción General:** Proporciona una breve descripción de lo que hace el script.
-3. **Salida:** Imprime la información en la consola y finaliza la ejecución del script con `exit 0`.
-
-##### ip_valida
-
-La función `ip_valida` valida el formato de la dirección IP y la máscara de subred proporcionadas por el usuario.
+La función `mostrar_ayuda` proporciona un menú informativo con el uso correcto del script, las opciones disponibles y ejemplos de ejecución.
 
 ###### Descripción del Funcionamiento
 
-1. **Entrada:** Toma como argumento una dirección IP.
-2. **Escaneo de Puertos:** Itera sobre una lista de puertos predefinidos y utiliza el comando `nc` (netcat) para intentar conectarse a cada puerto en la dirección IP proporcionada.
-3. **Salida:** 
-   - Si un puerto está abierto, se imprime la información del puerto y su servicio asociado.
-   - Si se ha habilitado la opción de salida en formato JSON, se agrega la información de los puertos abiertos al archivo JSON acumulativo.
-   - Si se especificó un archivo de salida, la información también se guarda en ese archivo.
+1. **Uso y Opciones:** Muestra cómo usar el script y las opciones disponibles.
+2. **Descripción General:** Proporciona una descripción básica del funcionamiento del script.
+3. **Salida:** Muestra la información de ayuda y termina la ejecución del script.
 
-##### arp
+##### `ip_valida`
 
-La función `arp` no está definida explícitamente en el script, pero se utiliza para obtener la dirección MAC de un dispositivo activo en la red.
+La función `ip_valida` valida la dirección IP y la máscara de subred proporcionada por el usuario, asegurándose de que sea del tipo correcto.
 
-###### Descripción del funcionamiento
+###### Descripción del Funcionamiento
 
-1. **Entrada:** Se invoca con una dirección IP específica.
-2. **Consulta ARP:** Utiliza el comando `arp -n` para consultar la tabla ARP y obtener la dirección MAC asociada a la dirección IP.
-3. **Salida:** Si se encuentra una dirección MAC, se imprime en la consola.
+1. **Entrada:** Recibe una dirección IP y una máscara de subred.
+2. **Validación de Formato:** Verifica que el formato de la IP y la máscara sea válido (ej. `192.168.1.0/24`).
+3. **Salida:** Si la IP o la máscara no son válidas, muestra un mensaje de error y termina la ejecución.
 
-##### Función Principal (Bucle principal)
+##### `arp`
 
-El script no tiene una función principal explícita, pero la lógica de ejecución se desarrolla a través de un bucle `while` que procesa los argumentos de entrada y llama a las funciones anteriores según sea necesario.
+La función `arp` consulta la tabla ARP del sistema para obtener la dirección MAC de un dispositivo dado.
 
-###### Descripción del funcionamiento
+###### Descripción del Funcionamiento
 
-1. **Procesamiento de Argumentos:** Utiliza un bucle `while` para analizar los argumentos de línea de comandos y establecer las variables de configuración.
-2. **Validación Inicial:** Llama a la función `ip_valida` para verificar la dirección IP y la máscara.
-3. **Escaneo de IPs:** Llama a la función `ping_a_ips` para iniciar el escaneo de la red.
-4. **Salida Final:** Imprime el tiempo de ejecución y la ubicación del archivo de salida, si corresponde. 📊
+1. **Entrada:** Recibe una dirección IP.
+2. **Consulta ARP:** Usa el comando `arp -n` para obtener la dirección MAC asociada a la IP.
+3. **Salida:** Muestra la dirección MAC en la consola si es encontrada.
+
+##### Función Principal (Bucle Principal)
+
+El script no tiene una función principal explícita, pero su lógica se organiza en un bucle que procesa los argumentos de la línea de comandos y ejecuta las funciones necesarias.
+
+###### Descripción del Funcionamiento
+
+1. **Procesamiento de Argumentos:** El bucle `while` procesa los argumentos del script, configurando opciones como el archivo de salida, el formato JSON y si se desea mostrar las direcciones MAC.
+2. **Escaneo de IPs:** Llama a la función `ping_a_ips` para realizar el escaneo de las IPs activas dentro del rango especificado.
+3. **Escaneo de Puertos:** Para cada dispositivo activo, el script escanea los puertos definidos en el archivo `tcp.csv`.
+4. **Registro de Resultados:** Los resultados se guardan en el archivo de salida o en un archivo JSON si así se especifica.
+
+---
 
 ## Requisitos
 
-Antes de ejecutar el script, asegúrate de que tu sistema cumpla con los siguientes requisitos:
+Para ejecutar el script, asegúrate de que tu sistema cumpla con los siguientes requisitos:
 
 ### 1. **SO**
 
-   - El script ha sido diseñado para funcionar en sistemas basados en Unix, como:
-     - **Linux** (distribuciones como Ubuntu, CentOS, Debian, etc.)
-     - **macOS**
-   - No se garantiza su funcionamiento en sistemas Windows sin un entorno compatible como Cygwin o WSL (Windows Subsystem for Linux).
+El script está diseñado para funcionar en sistemas basados en Unix, como:
+
+- **Linux** (Ubuntu, CentOS, Debian, etc.)
+- **macOS**
+
+No se garantiza su funcionamiento en Windows sin un entorno compatible como **Cygwin** o **WSL**.
 
 ### 2. **Dependencias**
 
-   Asegúrate de que las siguientes herramientas y bibliotecas estén instaladas en tu sistema:
+Asegúrate de que las siguientes herramientas y bibliotecas estén instaladas:
 
-   - **ping**: Herramienta para enviar paquetes ICMP a direcciones IP.
-     - **Instalación en Debian/Ubuntu**: `sudo apt install iputils-ping`
-     - **Instalación en CentOS/RHEL**: `sudo yum install iputils`
-   
-   - **netcat (nc)**: Utilidad para leer y escribir datos a través de conexiones de red utilizando TCP o UDP.
-     - **Instalación en Debian/Ubuntu**: `sudo apt install netcat`
-     - **Instalación en CentOS/RHEL**: `sudo yum install nc`
-   
-   - **jq**: Herramienta de línea de comandos para procesar JSON.
-     - **Instalación en Debian/Ubuntu**: `sudo apt install jq`
-     - **Instalación en CentOS/RHEL**: `sudo yum install jq`
-   
-   - **arp**: Comando utilizado para mostrar o manipular la tabla ARP (Address Resolution Protocol).
-     - Generalmente, está incluido en la mayoría de las distribuciones de Linux y macOS por defecto.
+- **ping:** Herramienta para enviar paquetes ICMP.
+  - **Instalación en Debian/Ubuntu:** `sudo apt install iputils-ping`
+  - **Instalación en CentOS/RHEL:** `sudo yum install iputils`
+
+- **netcat (nc):** Utilidad para conexiones TCP/UDP.
+  - **Instalación en Debian/Ubuntu:** `sudo apt install netcat`
+  - **Instalación en CentOS/RHEL:** `sudo yum install nc`
+
+- **jq:** Herramienta para procesar JSON desde la línea de comandos.
+  - **Instalación en Debian/Ubuntu:** `sudo apt install jq`
+  - **Instalación en CentOS/RHEL:** `sudo yum install jq`
+
+- **arp:** Comando para consultar la tabla ARP.
+  - Generalmente incluido en la mayoría de distribuciones de Linux y macOS por defecto.
 
 ### 3. **Permisos**
 
-   - Es posible que necesites permisos de superusuario para ejecutar algunas de las funciones del script, especialmente aquellas que involucran escaneo de puertos o acceso a la tabla ARP. Puedes ejecutar el script con `sudo` si es necesario:
-     ```bash
-     sudo ./nombre_del_script.sh
-     ```
+Es posible que necesites permisos de superusuario para ejecutar algunas funciones del script, especialmente aquellas que implican escaneo de puertos o acceso a la tabla ARP.
 
+Puedes ejecutar el script con `sudo` si es necesario:
+
+```bash
+sudo ./netscanner.sh
+```
 
 ## Troubleshooting
 
-Para ejecutar el script, utiliza la siguiente sintaxis en la terminal:
+Si al ejecutar el script encuentras problemas relacionados con los saltos de línea o formatos de texto, puedes solucionarlo instalando y utilizando la herramienta ```dos2unix```.
 
-```bash
-./nombre_del_script.sh [opciones] [argumentos]
-````
-![Error en Linux](imagenes/Probar_script_en_Linux.png)
+![Problemas](imagenes/Probar_script_en_Linux.png)
 
-Este error puede aparecer cuando ejecutamos el script en Linux:
+### Error: "script no se ejecuta correctamente"
 
-
-
-Para solucionarlo, debemos instalar la aplicación `dos2unix`:
+1. Solución instalar ```dos2unix```
 
 ```bash
 sudo apt-get install dos2unix
 ```
 
-Una vez instalada , hacemos lo siguiente:
+2. Convertir el archivo con ```dos2unix```
 
-![Dos2Unix](imagenes/dos2unix.png)
+```bash
+dos2unix ./netscanner.sh
+```
 
-Ahora ya podremos utilizarlo con total normalidad!
+Después de realizar esta conversión, el script deberiía de ejecutarse correctamente
+
+![Dos2unix](imagenes/dos2unix.png)
+
+### Condición importante: "No está permitido el uso conjunto de -o y de --json"
+
+Este error ocurre cuando intentas usar ambas opciones al mismo tiempo. No puedes generar la salida en formato JSON y al mismo tiempo guardar el resultado en un archivo de texto.
+
+**Solucion**:
+
+1. Elimina una de las opciuones!
+   1. Si deseas utilizar JSON, asegúrate de no utilizar la opción -o
+   2. Si quieres guardar la salida en un archivo, omite la opción --json
+
+### Error: "Máscara de subred inválida"
+
+Este error puede ocurrir si la máscara de subred proporcionada no es válida. Las máscaras válidas que acepta el script son /8, /16, o /24.
+
+Solución:
+Asegúrate de que el rango de IP esté en el formato correcto, como 192.168.1.0/24.
+
+## Ejemplos de uso
+
+Para ejecutar el script, usa la siguiente sintaxis:
+
+```bash
+sudo bash ./netscanner.sh <rango_ip> [-o archivo_salida] [-m]
+```
+
+### Ejemplos de ejecución:
+
+1. Escanear un rango de IPs y guardar la salida en un archivo:
+
+```bash
+sudo bash ./netscanner.sh 192.168.1.0/24 -o resultado.txt -m
+
+```
+
+Este comando escaneará el rango 192.168.1.0/24, mostrará las direcciones MAC y guardará los resultados en el archivo resultado.txt.
+
+2. Escanear un rango de IPs, obtener la dirección MAC y exportar los resultados en formato JSON:
+
+```bash
+sudo bash ./netscanner.sh 192.168.1.0/24 --json -m
+
+```
+Este comando escaneará el rango 192.168.1.0/24, mostrará las direcciones MAC y guardará los resultados en un archivo JSON llamado exportacion.json.
+
+
+3. Escanear un rango de IPs sin opciones adicionales:
+
+```bash
+sudo bash ./netscanner.sh 192.168.1.0/24
+
+```
+
+Este comando escaneará el rango 192.168.1.0/24 sin mostrar direcciones MAC ni generar un archivo de salida.
+
+4. Escanear un rango con un tiempo de ejecución registrado:
+
+```bash
+sudo bash ./netscanner.sh 192.168.1.0/24 -t
+
+```
+Este comando escaneará el rango 192.168.1.0/24 y mostrará el tiempo que tarda en completarse el escaneo.
