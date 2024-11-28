@@ -221,3 +221,87 @@ Adaptador de Ethernet Ethernet:
 #### Utilizar 'Ctrl + R' para buscar comandos.
 
 Esta combinacion de teclas hace lo mismo que la flecha hacia arriba, ya que recorre todos los comandos utilizados previamente.
+
+### 6. Averiguar si el comando ```Get-Process``` contiene el atributo ```ComputerName```
+
+Si nos vamos al [manual de comandos de microsoft](https://learn.microsoft.com/es-es/powershell/module/microsoft.powershell.management/get-process?view=powershell-7.4) vemos como este comando no contiene dicho parámetro
+
+### 7. Mostrar la ayuda del comando ```Start-Process``` en una ventana emergente
+
+Para mostrar el comando ```Start-Process``` en una ventana emergente tendremos que introducir en el Powershell lo siguiente:
+
+```powershell
+PS C:\Users\Administrador> Get-help -Name Start-Process -ShowWindow
+PS C:\Users\Administrador>
+```
+
+![Ventana Emergente](imagenes/Ventana_emergente.png)
+
+
+### 8. Muestra la ayuda del comando ```Get-Help``` en el navegador invocándolo desde la linea de comandos 
+
+Para mostrar la ayuda del comando ```Get-Help```, tenemos que introducir el siguiente comando.
+
+```powershell
+PS C:\Users\Administrador> Get-Help Get-help -Online
+PS C:\Users\Administrador>
+
+```
+
+### 9. Mostrar los 20 últimos comandos que hemos introducido
+
+Para mostrar los 20 últimos comandos que hemos introducido tenemos que escribir el siguiente comando:
+
+```powershell
+
+PS C:\Users\Administrador> Get-History -Count 20
+
+  Id CommandLine
+  -- -----------
+   1 Show-Command -Name Start-Process
+   2 Get-help -Name Start-Process
+   3 Get-help -Name Start-Process
+   4 Get-help -Name Start-Process -full
+   5 Get-help -Name Start-Process -ShowWindow
+   6 Get-help -Online
+   7 Get-Help -Online
+   8 Get-Help -Online
+   9 Update-Help
+  10 Get-Help -Online
+  11 Get-Help Get-help -Online
+  12 Get-history 20
+  13 Get-history
+
+
+PS C:\Users\Administrador>
+```
+
+### 10. Eliminar las entradas 10,12 y 14 del historial.
+
+Si queremos borrar dichas entradas, tenemos que realizar lo siguiente:
+
+```powershell
+
+PS C:\Users\Administrador> Clear-History -Id 10,12,14
+PS C:\Users\Administrador> Get-History -Count 20
+
+  Id CommandLine
+  -- -----------
+   1 Show-Command -Name Start-Process
+   2 Get-help -Name Start-Process
+   3 Get-help -Name Start-Process
+   4 Get-help -Name Start-Process -full
+   5 Get-help -Name Start-Process -ShowWindow
+   6 Get-help -Online
+   7 Get-Help -Online
+   8 Get-Help -Online
+   9 Update-Help
+  11 Get-Help Get-help -Online
+  13 Get-history
+  15 Get-InitiatorId
+  16 Get-History -Count 20
+  17 Clear-History -Id 10,12,14
+
+
+PS C:\Users\Administrador>
+```
