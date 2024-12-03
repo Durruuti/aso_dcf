@@ -302,4 +302,80 @@ CPU           : 0,78125
 PriorityClass : AboveNormal
 ``` 
 
-### 15. 
+### 15. Repite la búsqueda anterior, pero ordenando el tiempo de CPU en descendiente
+
+Para realizar este enunciado, tenemos que modificar el comando anterior.Tenemos que reordenar los parametros de la siguiente forma:
+
+![Orden Descending : Modo Format List](imagenes/orden_descending_tabla.png)
+
+### 16. Muestra los usuarios que hay en el sistema agrupándolos por la propiedad Enable
+
+Junto con Get-LocalUser utilizaremos el sortobject para agrupar por Enabled
+
+```powershell
+PS C:\WINDOWS\system32> Get-LocalUser | Sort-Object -Property Enabled -Descending
+
+Name               Enabled Description
+----               ------- -----------
+aemlocal           True
+aemcentros         True
+Alumno             True
+Invitado           False   Cuenta integrada para el acceso como invitado al equipo o dominio
+WDAGUtilityAccount False   Una cuenta de usuario que el sistema administra y usa para escenarios de Protección de ap...
+Administrador      False   Cuenta integrada para la administración del equipo o dominio
+DefaultAccount     False   Cuenta de usuario administrada por el sistema.
+
+
+PS C:\WINDOWS\system32>
+```
+
+### 17. Mostrar los usuarios que hay en el sistema con la propiedad Enable puesta a True
+
+Utilizaremos el parametro ```Get-LocalUser``` junto con un **where** conformando el siguiente comando y recibiendo el output de unicamente los usuarios habilitados
+
+```powershell
+PS C:\WINDOWS\system32> Get-LocalUser | Where Enabled
+
+Name       Enabled Description
+----       ------- -----------
+aemcentros True
+aemlocal   True
+Alumno     True
+
+
+PS C:\WINDOWS\system32>
+```
+
+### 18. Mostrar un listado de todos los usuarios del sistema con el nombre y la fecha de la última vez que iniciaron sesion
+
+Para mostrar una lista de los usuarios con el nombre y la fecha de la ultima vez que iniciaron sesión utilizaremos **Format-List**
+
+```powershell
+PS C:\WINDOWS\system32> Get-LocalUser | Format-List  Name,LastLogon
+
+
+Name      : Administrador
+LastLogon : 27/12/2023 9:38:50
+
+Name      : aemcentros
+LastLogon : 15/04/2024 9:14:59
+
+Name      : aemlocal
+LastLogon : 17/04/2024 11:20:46
+
+Name      : Alumno
+LastLogon : 03/12/2024 8:39:13
+
+Name      : DefaultAccount
+LastLogon :
+
+Name      : Invitado
+LastLogon :
+
+Name      : WDAGUtilityAccount
+LastLogon :
+
+
+
+PS C:\WINDOWS\system32>
+```
