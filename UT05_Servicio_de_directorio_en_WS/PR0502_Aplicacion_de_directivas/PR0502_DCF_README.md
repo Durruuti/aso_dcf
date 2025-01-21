@@ -63,3 +63,44 @@ Para ello creamos la GPO en el dominio y buscamos en la siguiente direccion la p
 
 ![Configurar actualizaciones automáticas](imagenes/configurarauto.png)
 
+Como tenemos que establecer que las actualizaciones se apliquen fuera del horario laboral, tenemos que realizar la siguiente configuración
+
+![Configurar actualizaciones](imagenes/configactualizacion.png)
+
+He establecido que las 5 de la mañana la "empresa" no tiene actividad laboral y por lo tanto es el horario idóneo para aplicar las actualizaciones
+
+### Directiva 5
+
+Vamos a desactivar el acceso de lectura y escritura a dispositivos USB.
+
+Como se aplica a todos los usuarios del dominio, lo incluiremos con las demás.
+
+Buscaremos en Configuración de equipo -> Directivas -> Plantillas administrativas -> Sistema -> Acceso de almacenamiento extraíble la política
+
+![Denegar USB a lectura y escritura](imagenes/denegaraccesoescrituraylectura.png)
+
+Como vemos son dos políticas por separado. Ambas las habilitaremos
+
+
+### Directiva 6
+
+El usuario no podrá repetir ninguna de las 10 últimas contraseñas
+
+Se aplica a todos los usuarios del dominio pero a los usuarios **mgmt_director** y **dvlp_directo** se le aplicara la politica para que sean en vez de las 10 últimas, las 2.
+
+Primero creamos la GPO y buscamos que política aplicarle
+
+![Ultimas 10 contraseñas](imagenes/Ultimas10contras.png)
+
+Como vemos en la imagen le hemos establecido a todos los usuarios del dominio que recuerde las 10 últimas contraseñas.
+
+Ahora lo que tenemos que hacer es aplicar las excepciones
+
+Las aplicaremos haciendo otra GPO y esa GPO la vincularemos a ambas UOs
+
+UOS:
+1. Development : ![development](imagenes/development2ultimas.png)
+2. Management : ![management](imagenes/management2ultimas.png)
+
+
+### Directiva 7
