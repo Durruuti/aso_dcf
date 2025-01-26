@@ -98,9 +98,37 @@ Ahora lo que tenemos que hacer es aplicar las excepciones
 
 Las aplicaremos haciendo otra GPO y esa GPO la vincularemos a ambas UOs
 
-UOS:
-1. Development : ![development](imagenes/development2ultimas.png)
-2. Management : ![management](imagenes/management2ultimas.png)
+![Ultimas 2 contraseñas](imagenes/Ultimas2contras.png)
 
+UOS:
+1. Development
+
+![Usuarios Dev](imagenes/usuariosdev.png)
+
+2. Management
+
+![Usuarios Dev](imagenes/usuariosmanagement.png)
+
+Importante asegurarnos que tenemos creados esos dos usuarios en nuestro dominio
+
+Ahora nos vamos a las directivas y exigimos que solo cada usuario utilice la directiva dentro de la UO
+
+![Usuarios Vinculados](imagenes/usuariosvinculados.png)
 
 ### Directiva 7
+
+Primero crearemos la directiva y la buscaremos en el panel de GPOs.
+
+Como no especifica donde se aplica, la aplicaré a todos los equipos del dominio
+
+![30 Minutos para suspension](imagenes/30minsparasuspension.png)
+
+Ahora tenemos que crear un filtro VMI para que únicamente se establezca a portátiles
+
+Para ello me he basado en esta información de un usuario de [Linkedin](https://www.linkedin.com/pulse/wmi-filtering-gpos-philip-cumiskey/)
+
+![Filtro a portátiles](imagenes/filtroaportatiles.png)
+
+Guardamos el filtro y lo asignamos a la GPO
+
+![Aplicar filtro VMI : Hibernacion](imagenes/Aplicadofiltrohibernacion.png)
