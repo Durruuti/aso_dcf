@@ -10,4 +10,4 @@
 
 [PR0403: Pipeline en Powershell](PR0403_Pipeline_en_Powershell/PR0403_DCF_README.md)
 
-[PR0404: Administración remota de servidor](PR0404_Administracion_remota_del_servidor)
+[PR0404: Administración remota de servidor](PR0404_Administracion_remota_del_servidor/PR0404_DCF_README.md)
