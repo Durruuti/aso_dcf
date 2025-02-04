@@ -3,61 +3,113 @@ Villabalter.edu
 
 ## Ciclos
 
-- Dominio Principal
-  - Ciclos
-    - ASIR
-      - Primero
-        - Aula 200
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 202
-        - Alumnos
-        - Profesores
-    - SMR
-      - Primero
-        - Aula 100
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 101
-        - Alumnos
-        - Profesores
-    - DAM
-      - Primero
-        - Aula 300
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 303
-        - Alumnos
-        - Profesores
-    - DAW
-      - Primero
-        - Aula 400
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 404
-        - Alumnos
-        - Profesores
-  - Sala de Profesores
-    - Equipos
-    - Impresoras
-  - Aulas
-    - Aula 200
-    - Aula 202
-    - Aula 100
-    - Aula 101
-    - Aula 300
-    - Aula 303
-    - Aula 400
-    - Aula 404
+- Villabalter.edu
+  - OU=Usuarios
+    - OU=Profesores
+      - CN=Profesor A (Usuario)
+      - CN=Profesor B (Usuario)
+      - CN=Profesor C (Usuario)
+      - CN=Profesor D (Usuario)
+    - OU=Alumnos
+      - OU=ASIR
+        - OU=Primero
+          - CN=Alumno 1 (Usuario)
+          - CN=Alumno 2 (Usuario)
+          - ... (hasta 30)
+        - OU=Segundo
+          - CN=Alumno 31 (Usuario)
+          - CN=Alumno 32 (Usuario)
+          - ... (hasta 15)
+      - OU=SMR
+        - OU=Primero
+          - CN=Alumno 46 (Usuario)
+          - CN=Alumno 47 (Usuario)
+          - ... (hasta 30)
+        - OU=Segundo
+          - CN=Alumno 76 (Usuario)
+          - CN=Alumno 77 (Usuario)
+          - ... (hasta 15)
+      - OU=DAM
+        - OU=Primero
+          - CN=Alumno 91 (Usuario)
+          - CN=Alumno 92 (Usuario)
+          - ... (hasta 30)
+        - OU=Segundo
+          - CN=Alumno 121 (Usuario)
+          - CN=Alumno 122 (Usuario)
+          - ... (hasta 15)
+      - OU=DAW
+        - OU=Primero
+          - CN=Alumno 136 (Usuario)
+          - CN=Alumno 137 (Usuario)
+          - ... (hasta 30)
+        - OU=Segundo
+          - CN=Alumno 166 (Usuario)
+          - CN=Alumno 167 (Usuario)
+          - ... (hasta 15)
+  - OU=Equipos
+    - OU=Aulas
+      - OU=Aula 200
+        - CN=PC1-Aula200 (Equipo)
+        - CN=PC2-Aula200 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula200 (Equipo)
+      - OU=Aula 202
+        - CN=PC1-Aula202 (Equipo)
+        - CN=PC2-Aula202 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula202 (Equipo)
+      - OU=Aula 100
+        - CN=PC1-Aula100 (Equipo)
+        - CN=PC2-Aula100 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula100 (Equipo)
+      - OU=Aula 101
+        - CN=PC1-Aula101 (Equipo)
+        - CN=PC2-Aula101 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula101 (Equipo)
+      - OU=Aula 300
+        - CN=PC1-Aula300 (Equipo)
+        - CN=PC2-Aula300 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula300 (Equipo)
+      - OU=Aula 303
+        - CN=PC1-Aula303 (Equipo)
+        - CN=PC2-Aula303 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula303 (Equipo)
+      - OU=Aula 400
+        - CN=PC1-Aula400 (Equipo)
+        - CN=PC2-Aula400 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula400 (Equipo)
+      - OU=Aula 404
+        - CN=PC1-Aula404 (Equipo)
+        - CN=PC2-Aula404 (Equipo)
+        - ... (hasta 15)
+        - CN=PC-Profesor-Aula404 (Equipo)
+    - OU=Sala de Profesores
+      - CN=PC-Profesor1 (Equipo)
+      - CN=PC-Profesor2 (Equipo)
+      - CN=Impresora-SalaProfesores (Equipo)
+  - OU=Grupos
+    - CN=Profesores (Grupo)
+    - CN=ASIR1 (Grupo)
+    - CN=ASIR2 (Grupo)
+    - CN=SMR1 (Grupo)
+    - CN=SMR2 (Grupo)
+    - CN=DAM1 (Grupo)
+    - CN=DAM2 (Grupo)
+    - CN=DAW1 (Grupo)
+    - CN=DAW2 (Grupo)
 
 Cada uno con un aula de 15 equipos windows 10
 
 15 Profesores que pueden impartir clase en cualquier aula
 
+
+CN=Profesor A (Usuario) → Se le añadirá al grupo especial Administradores del Dominio.
 
 ## Alumnos
 

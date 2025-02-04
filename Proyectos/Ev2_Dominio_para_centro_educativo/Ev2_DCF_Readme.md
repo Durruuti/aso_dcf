@@ -4,132 +4,94 @@ A través del siguiente enlace podrá consultar las notas que he ido tomando par
 
 [Notas](notas.md)
 
-# Proyecto 2º Evaluación: Dominio educativo
+# Proyecto 2º Evaluación: Dominio Educativo  
 
-## Villabalter.edu
+## Villabalter.edu  
 
-### Características del servidor
+### Características del Servidor  
 
-- Nombre de equipo: SRV-MSTR
-- Dominio: Villabalter.edu
-- SO: Windows Server 2019
-- Versión: Datacenter
-- Tipo de disco duro: NVMe (Partición GPT)
-- Direcciones ip:
-  - Interfaz de internet: DHCP(NAT)
-  - Interfaz local: 192.168.1.254
-- Dirección MAC: 00:50:56:38:2A:4B
-- DNS: Villabalter
-  -  DNS principal: Servidor
-  -  DNS secundario: 8.8.4.4 (Google)
+- **Nombre de equipo:** SRV-MSTR  
+- **Dominio:** Villabalter.edu  
+- **Sistema Operativo:** Windows Server 2019 (Datacenter)  
+- **Tipo de Disco Duro:** NVMe (Partición GPT)  
+- **Direcciones IP:**  
+  - **Interfaz de internet:** DHCP (NAT)  
+  - **Interfaz local:** 192.168.1.254  
+- **Dirección MAC:** 00:50:56:38:2A:4B  
+- **DNS:** Villabalter  
+  - **DNS principal:** Servidor  
+  - **DNS secundario:** 8.8.4.4 (Google)  
 
-### Configuración básica
+### Configuración Básica  
 
-Como primer paso a la instalación y configuración de este dominio educativo va a ser, tener una máquina Windows Server 2019. 
+Como primer paso en la instalación y configuración de este dominio educativo, es necesario contar con una máquina Windows Server 2019.  
 
-Los primeros pasos en esta configuración básica es establecer el nombre del equipo y la/las direcciones ip.
+Los primeros pasos en esta configuración básica incluyen establecer el nombre del equipo y definir las direcciones IP:  
 
-- Nombre equipo: SRV-MSTR
-- Interfaz de internet: DHCP
-- Interfaz de Red local: 192.168.1.0/24 -> Ip servidor: 192.168.1.254/24
+- **Nombre del equipo:** SRV-MSTR  
+- **Interfaz de internet:** DHCP  
+- **Interfaz de red local:** 192.168.1.0/24  
+  - **IP del servidor:** 192.168.1.254/24  
 
-### Alta disponibilidad
+![Configuración de direcciones IP](imagenes/config_ip.png)  
 
-Como configuración de alta disponibilidad al servidor le vamos a añadir dos NvMe en los cuales vamos a tener redundancia en forma de espejo RAID-1, para salvar la información en caso de fallo de uno de los discos
+### Alta Disponibilidad  
 
-Formaremos un RAID1 con dos discos NVME
+Para garantizar alta disponibilidad, se añadirá redundancia mediante un RAID-1 con dos discos NVMe, asegurando la integridad de los datos en caso de fallo de uno de los discos.  
 
-### Instalación de servicios
+### Instalación de Servicios  
 
-Obviamente como controlador principal de nuestro dominio, tenemos que instalar el rol de Active Directory y DNS.
+Dado que este servidor actuará como controlador principal del dominio, es necesario instalar los siguientes roles:  
 
-#### Roles: 
+#### **Roles Instalados**  
 
-- Servicios de dominio de ACtive Directory
-- DNS
-- Servicios de impresión y documentos
+- Servicios de Dominio de Active Directory  
+- DNS  
+- Servicios de Impresión y Documentos  
 
-#### Opciones del controlador
+![Servicios Instalados](imagenes/servicios.png)  
 
-- Nombre del bosque: Villabalter.edu
-- Nivel funcional del bosque y dominio: Windows Server 2016
-- Contraseña: Villabalter1 (La he establecido así en la MV. En un entorno real deberá de ser como la siguiente: **I36m}0":2?Zw**)
-- Nombre dominio NETBIOS: VILLABALTER
-- Carpetas
-  - Base de datos: C:\Windows\NTDS
-  - Archivos de registro: C:\Windows\NTDS
-  - SYSVOL: C:\Windows\SYSVOL
+#### **Opciones del Controlador**  
 
-#### Servicio de impresión
-A parte de estos roles,vamos a instalarle la característica de impresoras para que, en el caso de que un profesor necesite imprimir algo desde el aula, pueda imprimir por red.
+- **Nombre del Bosque:** Villabalter.edu  
+- **Nivel Funcional del Bosque y Dominio:** Windows Server 2016  
+- **Contraseña:** Villabalter1 *(En un entorno real se recomienda una contraseña segura como:* **I36m}0":2?Zw** *)*  
+- **Nombre de dominio NETBIOS:** VILLABALTER  
+- **Carpetas:**  
+  - **Base de datos:** C:\Windows\NTDS  
+  - **Archivos de registro:** C:\Windows\NTDS  
+  - **SYSVOL:** C:\Windows\SYSVOL  
 
-Existirá una impresora en el aula de profesores conectada a la red del servidor 
+### Servicio de Impresión  
 
-Nombre impresora: IMP-PROF
-Dirección IP: 192.168.1.230
+Además de los roles mencionados, se instalará la característica de impresión para que los profesores puedan imprimir en red desde el aula.  
 
-##### Panel Web
+- **Impresora disponible:**  
+  - **Nombre:** IMP-PROF  
+  - **Dirección IP:** 192.168.1.230  
 
- (Apuntar lo que contiene el panel web)
+#### **Panel Web**  
 
-##### Servicio LPD
+*(Apuntar lo que contiene el panel web)*  
 
-Este servicio entrará en funcionamiento cuando algún equipo UNIX, ya sea en físico o en máquina virtual, necesite realizar alguna impresión. (Tiene que estar dentro del dominio)
+#### **Servicio LPD**  
 
-El servidor desplegará la impresora compartida en todo el dominio
+Este servicio permitirá la impresión desde equipos UNIX (ya sean físicos o máquinas virtuales) que formen parte del dominio.  
 
-### Unidades organizativas
-Vamos a establecer la siguiente estructura de unidades organizativas.
+El servidor desplegará la impresora compartida en toda la red.  
 
-Entenderemos mejor así la estructura de nuestro dominio
+### Unidades Organizativas  
 
-- Dominio Principal
-  - Ciclos
-    - ASIR
-      - Primero
-        - Aula 200
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 202
-        - Alumnos
-        - Profesores
-    - SMR
-      - Primero
-        - Aula 100
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 101
-        - Alumnos
-        - Profesores
-    - DAM
-      - Primero
-        - Aula 300
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 303
-        - Alumnos
-        - Profesores
-    - DAW
-      - Primero
-        - Aula 400
-        - Alumnos
-        - Profesores
-      - Segundo
-        - Aula 404
-        - Alumnos
-        - Profesores
-  - Sala de Profesores
-    - Equipos
-    - Impresoras
-  - Aulas
-    - Aula 200
-    - Aula 202
-    - Aula 100
-    - Aula 101
-    - Aula 300
-    - Aula 303
-    - Aula 400
-    - Aula 404
+Se establecerá la siguiente estructura de Unidades Organizativas para mejorar la gestión del dominio:  
+
+![Estructura Unidades Organizativas](imagenes/Estructura_ous.png)  
+
+Una vez definidas las unidades organizativas, se procederá a la creación de los siguientes grupos dentro de sus respectivas UO:  
+
+![Grupos](imagenes/Grupos.png)  
+
+### Automatización  
+
+Con la instalación y configuración del dominio finalizadas, se procederá a la automatización del alta de alumnos.  
+
+El alta de usuarios se realizará utilizando un archivo **.csv** como referencia.  
