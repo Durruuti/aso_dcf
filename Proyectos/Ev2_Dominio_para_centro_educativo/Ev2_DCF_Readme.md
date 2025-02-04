@@ -95,3 +95,7 @@ Una vez definidas las unidades organizativas, se procederá a la creación de lo
 Con la instalación y configuración del dominio finalizadas, se procederá a la automatización del alta de alumnos.  
 
 El alta de usuarios se realizará utilizando un archivo **.csv** como referencia.  
+
+EL primer paso es crear un directorio en **C:** que se llame ***scripts** y en su interior crearemos el archivo con extensión **ps1**.
+
+![Script Powershell](imagenes/archivo_ps1.png)
