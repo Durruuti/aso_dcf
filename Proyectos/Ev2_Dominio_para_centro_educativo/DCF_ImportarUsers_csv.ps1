@@ -1,111 +1,110 @@
 <#
-    .DESCRIPTION
-    Importa usuarios en Active Directory desde un archivo .csv de manera optimizada.
-    .NOTAS
-    Escrito por: Diego Calles Fernández
-    Optimizado por: ChatGPT
-    .REFERENCIAS
-    https://www.alitajran.com/import-ad-users-from-csv-powershell/
+    .TITULO
+    Importador automático de usuarios en Powershell
+
+    .DESCRIPCION
+    Este script importa usuarios desde un archivo CSV y los crea automáticamente en Active Directory, asignándoles la Unidad Organizativa (OU) correspondiente según el ciclo y curso.
+
+    .AUTOR
+    Diego Calles Fernández
 #>
 
-# Definición de localización del archivo CSV e importación de datos
-$ArchivoCSV = "C:\temporal\alumnos.csv"
-
-# Verificar si el archivo CSV existe
-if (!(Test-Path $ArchivoCSV)) {
-    Write-Error "El archivo CSV no existe en la ruta especificada: $ArchivoCSV"
-    exit
-}
-
-# Importar usuarios desde el CSV
-$Usuarios = Import-Csv $ArchivoCSV -Delimiter ','
-
-# Importar el módulo de Active Directory
+# Importar módulo de Active Directory
 Import-Module ActiveDirectory
 
-# Contraseña por defecto para los usuarios
-$Contra = "Villabalter1"
+# Búsqueda de archivo CSV
+[System.Reflection.Assembly]::LoadWithPartialName("System.windows.forms") | Out-Null
+$ventana = New-Object System.Windows.Forms.OpenFileDialog
+$ventana.InitialDirectory = "C:\" 
+$ventana.Filter = "CSV (*.csv)| *.csv"
+$ventana.ShowDialog() | Out-Null
+$rutacsv = $ventana.FileName
 
-# Definir la estructura de OUs en un Hash Table
-$baseOU = "OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu"
-$OUHashTable = @{
-    "ASIR|Primero"  = "OU=Primero,OU=ASIR,$baseOU"
-    "ASIR|Segundo"  = "OU=Segundo,OU=ASIR,$baseOU"
-    "SMR|Primero"   = "OU=Primero,OU=SMR,$baseOU"
-    "SMR|Segundo"   = "OU=Segundo,OU=SMR,$baseOU"
-    "DAM|Primero"   = "OU=Primero,OU=DAM,$baseOU"
-    "DAM|Segundo"   = "OU=Segundo,OU=DAM,$baseOU"
-    "DAW|Primero"   = "OU=Primero,OU=DAW,$baseOU"
-    "DAW|Segundo"   = "OU=Segundo,OU=DAW,$baseOU"
+# Importar archivo en variable
+if (-not [System.IO.File]::Exists($rutacsv)) {
+    Write-Host "La ruta del archivo no es válida"
+    Exit
 }
 
-# Salida de depuración para verificar los usuarios importados
-Write-Output "Usuarios importados: $($Usuarios.Count)"
+Write-Host "Importando archivo CSV..."
+$ArchivoCSV = Import-Csv -LiteralPath "$rutacsv"
 
-foreach ($Usuario in $Usuarios) {
-    # Validación de campos necesarios
-    if (-not ($Usuario.Nombre -and $Usuario."Primer Apellido" -and $Usuario."Segundo Apellido" -and $Usuario.Ciclo -and $Usuario.Curso)) {
-        Write-Warning "El usuario tiene datos incompletos: $($Usuario | Out-String)"
-        continue
+# Diccionario de Ciclos y Cursos
+$Ciclos = @{
+    "ASIR" = @{ "Primero" = "OU=Primero,OU=ASIR,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu"; "Segundo" = "OU=Segundo,OU=ASIR,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu" }
+    "DAM"  = @{ "Primero" = "OU=Primero,OU=DAM,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu"; "Segundo" = "OU=Segundo,OU=DAM,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu" }
+    "DAW"  = @{ "Primero" = "OU=Primero,OU=DAW,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu"; "Segundo" = "OU=Segundo,OU=DAW,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu" }
+    "SMR"  = @{ "Primero" = "OU=Primero,OU=SMR,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu"; "Segundo" = "OU=Segundo,OU=SMR,OU=Alumnos,OU=Usuarios,OU=Centro Educativo,DC=Villabalter,DC=edu" }
+}
+
+# Ruta base para HomeDirectory
+$RutaBaseUsuarios = "\\SRV-MSTR\Usuarios$"
+
+# Iterar en el CSV
+foreach ($usuario in $ArchivoCSV) {
+    ## Recoger el nombre y apellidos
+    $Nombre = $usuario."Nombre"
+    $PrimerApellido = $usuario."Primer Apellido"
+    $SegundoApellido = $usuario."Segundo Apellido"
+
+    ## Iniciales de los apellidos
+    $inicPA = $PrimerApellido[0]
+    $inicSA = $SegundoApellido[0]
+
+    ## Generar el nombre de usuario
+    $NombreUsuario = "$Nombre$inicPA$inicSA"
+
+    ## Crear el UPN base
+    $UPN = "$NombreUsuario@villabalter.edu"
+    $SamAccountName = $NombreUsuario
+
+    ## Verificar si el UPN ya existe
+    $i = 1
+    $UPNtemp = $UPN
+    $SamAccountTemp = $SamAccountName
+
+    while (Get-ADUser -Filter {UserPrincipalName -eq $UPNtemp} -ErrorAction SilentlyContinue) {
+        $UPNtemp = "$NombreUsuario$i@villabalter.edu"
+        $SamAccountTemp = "$NombreUsuario$i"
+        $i++ 
     }
 
-    # Limpiar y normalizar datos
-    $nombre = $Usuario.Nombre.Trim()
-    $apellido1 = $Usuario."Primer Apellido".Trim()
-    $apellido2 = $Usuario."Segundo Apellido".Trim()
-    $ciclo = $Usuario.Ciclo.Trim().ToUpper()   
-    $curso = $Usuario.Curso.Trim().ToLower()   
+    $UPN = $UPNtemp
+    $SamAccountName = $SamAccountTemp
 
-    # Mostrar los valores para depuración
-    Write-Output "Ciclo: $ciclo, Curso: $curso"
+    ## Recoger datos adicionales
+    $Contra = ConvertTo-SecureString "Villabalter1" -AsPlainText -Force
+    $Ciclo = $usuario."Ciclo"
+    $Curso = $usuario."Curso"
 
-    # Generar la clave para el HashTable
-    $OUKey = "$ciclo|$curso"
+    # Verificación y asignación de la ruta de la OU
+    if ($Ciclos.ContainsKey($Ciclo) -and $Ciclos[$Ciclo].ContainsKey($Curso)) {
+        $RutaOU = $Ciclos[$Ciclo][$Curso]
+        Write-Host "Creando usuario $NombreUsuario en la UO: $RutaOU"
 
-    # Verificar si la clave está en el HashTable
-    if ($OUHashTable.ContainsKey($OUKey)) {
-        $OU = $OUHashTable[$OUKey]
-        Write-Output "Clave encontrada en el HashTable: $OU"
+        # Definir HomeDirectory y unidad de red
+        $HomeDirectory = "$RutaBaseUsuarios\$SamAccountName"
+        $HomeDrive = "H:"  # Asignar la letra de la unidad de red que quieres (A:, Z:, etc.)
+
+        # Crear usuario en Active Directory
+        New-ADUser -SamAccountName $SamAccountName `
+                   -UserPrincipalName "$UPN" `
+                   -Name "$Nombre $PrimerApellido $SegundoApellido" `
+                   -GivenName $Nombre `
+                   -Surname "$PrimerApellido $SegundoApellido" `
+                   -DisplayName "$Nombre $PrimerApellido $SegundoApellido" `
+                   -Path $RutaOU `
+                   -AccountPassword $Contra `
+                   -HomeDirectory $HomeDirectory `
+                   -HomeDrive $HomeDrive `
+                   -Enabled $true `
+                   -ScriptPath "conecta.bat" `
+                   -PassThru
+
+        Write-Host "Usuario $SamAccountName creado correctamente con HomeDirectory en $HomeDirectory."
+
+
     } else {
-        Write-Warning "Clave '$OUKey' no encontrada en el HashTable. Se asignará a la OU base."
-        $OU = $baseOU
-    }
-
-    Write-Output "Asignando a usuario $nombre la OU: $OU"  # Depuración
-
-    # Verificar si la OU realmente existe en el dominio
-    if (-not (Get-ADOrganizationalUnit -Filter {DistinguishedName -eq $OU} -ErrorAction SilentlyContinue)) {
-        Write-Error "La OU $OU no existe en Active Directory. No se puede asignar el usuario."
-        continue
-    }
-
-    # Verificar si el usuario ya existe y generar un SamAccountName único
-    $samAccountName = "$($nombre.Substring(0,1))$($apellido1)$($apellido2)"
-    $contador = 1
-    while (Get-ADUser -Filter { SamAccountName -eq $samAccountName } -ErrorAction SilentlyContinue) {
-        $samAccountName = "$($nombre.Substring(0,1))$($apellido1)$($apellido2)$contador"
-        $contador++
-    }
-
-    # Parámetros de usuario
-    $NuevosParametros = @{
-        Name               = "$nombre $apellido1 $apellido2"
-        GivenName          = $nombre
-        Surname            = $apellido1
-        DisplayName        = "$nombre $apellido1 $apellido2"
-        EmailAddress       = "$samAccountName@educa.jcyl.es"
-        SamAccountName     = $samAccountName
-        UserPrincipalName  = "$samAccountName@educa.jcyl.es"
-        Path               = $OU
-        AccountPassword    = (ConvertTo-SecureString $Contra -AsPlainText -Force)
-        Enabled            = $true
-    }
-
-    # Intentar crear el usuario y manejar errores
-    try {
-        New-ADUser @NuevosParametros -ErrorAction Stop
-        Write-Output "Usuario $nombre creado exitosamente con SamAccountName: $samAccountName en $OU."
-    } catch {
-        Write-Error "Error al crear el usuario ${samAccountName}: $($_.Exception.Message)"
+        Write-Host "Error: Ciclo o curso no válido para $NombreUsuario."
     }
 }
