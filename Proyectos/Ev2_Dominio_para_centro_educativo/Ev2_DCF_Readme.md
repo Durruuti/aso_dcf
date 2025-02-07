@@ -257,8 +257,12 @@ Ahora tendremos unicamente que iniciar sesión en el equipo y listo!, ya tenriam
 En cuanto a los usuarios vamos a aplicar las siguientes políticas
 
 - **Bloqueo de cuenta tras 5 intentos** : Si el alumno/Profesor no escribe la contraseña del dominio y está probando otras, tras 5 intentos se le bloqueará la cuenta
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Configuración de seguridad > Directivas de cuenta > Directiva de bloqueo de cuenta
+
+
 
 - **Redirigir escritorio y documentos a una unidad de red** : Se almacenarán en una unidad de red documentos y escritorio de cada uno de los usuarios.
+  - **Ubicacion de la política:** Configuración del usuario > Perfiles obligatorios
 
 En relación a los usuarios creo que estas dos políticas son las más idoneas, ya que, como son alumnos de fp de informática van a tener que tocar la configuración del ordenador.
 
@@ -269,10 +273,13 @@ Por lo que restringir el acceso a estos puntos es interrumpir el funcionamiento 
 En cuanto a los aquipos y las propias aulas:
 
 - **Apagar el equipo tras 30 mins de inactividad**
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Directivas de energía
 
 - **Bitlocker habilitado**: Se activará bitlocker en todos los ordenadores como método de prevención.
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Directivas de BitLocker
 
 - **Restringir acceso al registro de Windows**: Aunque sean alumnos de informática no tienen que tocar el registro de Windows para ninguna tarea de sus asignaturas
+  - **Ubicacion de la política:** Configuración del usuario > Plantillas administrativas > Sistema > Impedir acceso al registro de Windows
 
 Con esas tres políticas aseguramos la integridad del ordenador ante cualquier manipulación indebida
 
@@ -280,9 +287,16 @@ Con esas tres políticas aseguramos la integridad del ordenador ante cualquier m
 #### Red
 
 - **Bloqueo de puertos innecesarios**: ünicamente los puertos abiertos de estos equipos serán los indispensables para las Webs,Servicios y programas que necesiten en relación al desarrollo de la clase
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Firewall de Windows con seguridad avanzada
+
+- **Bloqueo de puertos innecesarios**: Se habilitará exclusivamente los logs del firewall al administrador del dominio educativo
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Firewall de Windows con seguridad avanzada > Configuración de auditoría
 
 
 #### Nivel Servidor
 
 - **Automatización copias de seguridad**
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Configuración de copia de seguridad
+
 - **Acceso restringido al servidor salvo Admins**: Solo los administradores podrán acceder al servidor desde los equipos del dominio
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Directivas de seguridad local > Directiva de acceso a red
