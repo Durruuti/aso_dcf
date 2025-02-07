@@ -272,11 +272,12 @@ Por lo que restringir el acceso a estos puntos es interrumpir el funcionamiento 
 
 En cuanto a los aquipos y las propias aulas:
 
-- **Apagar el equipo tras 30 mins de inactividad**
-  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Directivas de energía
+- **Desactivar la pantalla tras 5 mins de inactividad**
+  - **Ubicacion de la política:** Configuración del equipo > Directivas > Plantillas administrativas > Sistema > Administración de energía > Configuracion de video y pantalla > Desactivar la pantalla (conectado)
 
 - **Bitlocker habilitado**: Se activará bitlocker en todos los ordenadores como método de prevención.
-  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Directivas de BitLocker
+  - **Requisito**: Verificar que TPV está activado
+  - **Ubicacion de la política:** Configuración del equipo => Plantillas administrativas => Componentes de Windows => Cifrado de unidad BitLocker =>Unidades del sistema operativo
 
 - **Restringir acceso al registro de Windows**: Aunque sean alumnos de informática no tienen que tocar el registro de Windows para ninguna tarea de sus asignaturas
   - **Ubicacion de la política:** Configuración del usuario > Plantillas administrativas > Sistema > Impedir acceso al registro de Windows
@@ -287,10 +288,8 @@ Con esas tres políticas aseguramos la integridad del ordenador ante cualquier m
 #### Red
 
 - **Bloqueo de puertos innecesarios**: ünicamente los puertos abiertos de estos equipos serán los indispensables para las Webs,Servicios y programas que necesiten en relación al desarrollo de la clase
-  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Firewall de Windows con seguridad avanzada
-
-- **Bloqueo de puertos innecesarios**: Se habilitará exclusivamente los logs del firewall al administrador del dominio educativo
-  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Firewall de Windows con seguridad avanzada > Configuración de auditoría
+  - **Método de aplicacion**: Exclusivamente cuando se conozcan los puertos utilizados se bloquearan el resto
+  - **Ubicacion de la política:** Configuración del equipo > Configuración de Windows > Configuración de seguridad > Windows Defender Firewall > Windows Defender Firewall
 
 
 #### Nivel Servidor
