@@ -222,23 +222,33 @@ Una cosa importante del script es que podremos escoger el archivo .csv que quera
 
 ### Carpeta personal compartida por cada grupo
 
-Para agregar una carpeta personal compartida por cada grupo vamos a hacer lo siguiente:
+Para crear una carpeta personal de cada grupo lo que tenemos que hacer es lo siguiente:
 
-Crearemos una carpeta en c que se llame grupos y dentro de ella , una para cada grupo.
+Primero vamos a los recursos compartidos del **Controlador del dominio** y creamos la carpeta que almacenará los grupos
 
-De esta forma las compartiremos y le asignaremos los permisos.
+  > ¡Importante asegurarnos que hemos puesto bien los permisos!
 
-![Compartir carpetas de cada grupo](imagenes/compartircarpetasgrupos.png)
+![Recuros compartido](imagenes/Recursocompartido.png)
 
-Esto se hace utilizando el menú contextual de windows pinhcnado en "Compartir con -> Usuarios específicos"
+Ahora nos vamos a la carpeta y creamos las carpetas de cada grupo en su interior
+Nos aseguramos de que los permisos están bien establecidos
 
+![PermisosCarpetasgrupos](imagenes/PermisosCarpetasgrupos.png)
 
-![Permisos de cada grupo](imagenes/permisosgrupos.png)
+#### Configuración acceso a carpeta compartida
 
-Iremos a NETLOGON para asignar que se monten automáticamente cuando un usuario perteneciente a un grupo inicie sesión en cualquier ordenador del dominio
+Para asegurarnos que la carpeta de cada curso va a aparecer en el inicio de sesión de cada usuario en cualquier equipo del dominio, tenemos que seguir lo siguiente:
 
-![Archivo en NetLogon](imagenes/ArchivoenNetlogon.png)
+Dentro de cada curso añadir la carpeta compartida con el enlace a la carpeta que hemos creado
+![CarpetacompartidaenUO](imagenes/CarpetacompartidaenUO.png)
 
+Una vez hecho esto tenemos que crear la política de seguridad que se encargará de crear la unidad de red a cada grupo cada inicio de sesión
+
+![Carpeta red compartida](imagenes/CarpetaREdCompartida.png)
+
+Ahora tendremos unicamente que iniciar sesión en el equipo y listo!, ya tenriamos configurada lac arpeta para cada grupo.
+
+> Solo quedaria repetir el proceso tantas veces como grupos haya
 
 ### Políticas del dominio [Máx Seguridad]
 
