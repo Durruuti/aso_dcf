@@ -218,6 +218,61 @@ foreach ($usuario in $ArchivoCSV) {
 ```
 A cada alumno se le añadirá una carpeta personal de manera personalizada e incluída en el script anterior.
 
+Una cosa importante del script es que podremos escoger el archivo .csv que queramos y no uno exclusivo obligatoriamente
 
 ### Carpeta personal compartida por cada grupo
 
+Para agregar una carpeta personal compartida por cada grupo vamos a hacer lo siguiente:
+
+Crearemos una carpeta en c que se llame grupos y dentro de ella , una para cada grupo.
+
+De esta forma las compartiremos y le asignaremos los permisos.
+
+![Compartir carpetas de cada grupo](imagenes/compartircarpetasgrupos.png)
+
+Esto se hace utilizando el menú contextual de windows pinhcnado en "Compartir con -> Usuarios específicos"
+
+
+![Permisos de cada grupo](imagenes/permisosgrupos.png)
+
+Iremos a NETLOGON para asignar que se monten automáticamente cuando un usuario perteneciente a un grupo inicie sesión en cualquier ordenador del dominio
+
+![Archivo en NetLogon](imagenes/ArchivoenNetlogon.png)
+
+
+### Políticas del dominio [Máx Seguridad]
+
+#### Usuarios
+
+En cuanto a los usuarios vamos a aplicar las siguientes políticas
+
+- **Bloqueo de cuenta tras 5 intentos** : Si el alumno/Profesor no escribe la contraseña del dominio y está probando otras, tras 5 intentos se le bloqueará la cuenta
+
+- **Redirigir escritorio y documentos a una unidad de red** : Se almacenarán en una unidad de red documentos y escritorio de cada uno de los usuarios.
+
+En relación a los usuarios creo que estas dos políticas son las más idoneas, ya que, como son alumnos de fp de informática van a tener que tocar la configuración del ordenador.
+
+Por lo que restringir el acceso a estos puntos es interrumpir el funcionamiento de la clase , dependiendo de que el administrador esté presente siempre.
+
+#### Equipos y aulas
+
+En cuanto a los aquipos y las propias aulas:
+
+- **Apagar el equipo tras 30 mins de inactividad**
+
+- **Bitlocker habilitado**: Se activará bitlocker en todos los ordenadores como método de prevención.
+
+- **Restringir acceso al registro de Windows**: Aunque sean alumnos de informática no tienen que tocar el registro de Windows para ninguna tarea de sus asignaturas
+
+Con esas tres políticas aseguramos la integridad del ordenador ante cualquier manipulación indebida
+
+
+#### Red
+
+- **Bloqueo de puertos innecesarios**: ünicamente los puertos abiertos de estos equipos serán los indispensables para las Webs,Servicios y programas que necesiten en relación al desarrollo de la clase
+
+
+#### Nivel Servidor
+
+- **Automatización copias de seguridad**
+- **Acceso restringido al servidor salvo Admins**: Solo los administradores podrán acceder al servidor desde los equipos del dominio
